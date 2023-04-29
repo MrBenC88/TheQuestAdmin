@@ -1,7 +1,7 @@
 import Header from "../components/Header";
 import CTABanner from "../components/CTABanner";
 import Footer from "../components/Footer";
-import AboutContent from "../components/AboutContent";
+import UserPanel from "../components/UserPanel";
 import DashboardHeader from "../components/DashboardHeader";
 import { Box, Text } from "@chakra-ui/react";
 
@@ -15,9 +15,8 @@ const Dashboard = () => {
   return (
     <Box boxSize="100%" bgColor="orange.50">
       <DashboardHeader />
-      <Text fontSize="2xl" color="black" p="20%">
-        Dashboard page coming soon!
-      </Text>
+
+      <UserPanel />
     </Box>
   );
 };
