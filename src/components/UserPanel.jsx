@@ -10,12 +10,10 @@ import {
 } from "@chakra-ui/react";
 
 const getRandomColor = () => {
-  const letters = "0123456789ABCDEF";
-  let color = "#";
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
+  const r = Math.floor(Math.random() * 128) + 128;
+  const g = Math.floor(Math.random() * 128) + 128;
+  const b = Math.floor(Math.random() * 128) + 128;
+  return `rgb(${r}, ${g}, ${b})`;
 };
 
 const sampleQuests = [
@@ -196,24 +194,22 @@ const UserPanel = () => {
       textColor="black"
     >
       <Heading color="black" size="lg">
-        User Panel
+        User Panel | Active Quests
       </Heading>
       {sampleQuests.map((q) => {
         return (
           <Box
             key={q.questName}
             bgColor={q.questColor}
-            pt="1%"
-            pb="1%"
-            pl="5%"
-            pr="5%"
+            py="3%"
+            px="5%"
             width="100%"
             textColor="black"
             border="1px"
             borderColor="gray.200"
             borderRadius="lg"
             boxShadow="lg"
-            mt="2%"
+            mt="1%"
           >
             <Heading color="black" size="md">
               {q.questName}
@@ -221,7 +217,7 @@ const UserPanel = () => {
             <Text color="black" fontSize="sm">
               {q.questDescription}
             </Text>
-            <Text color="black" fontSize="sm">
+            {/* <Text color="black" fontSize="sm">
               {q.questType}
             </Text>
             <Text color="black" fontSize="sm">
@@ -235,7 +231,7 @@ const UserPanel = () => {
             </Text>
             <Text color="black" fontSize="sm">
               {q.questMembers}
-            </Text>
+            </Text> */}
             {/* <Text color="black" fontSize="sm">
               {quest.questTasks}
             </Text> */}
