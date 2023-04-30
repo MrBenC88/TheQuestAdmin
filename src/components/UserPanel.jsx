@@ -7,6 +7,8 @@ import {
   Flex,
   Button,
   useBreakpointValue,
+  HStack,
+  useMediaQuery,
 } from "@chakra-ui/react";
 
 const getRandomColor = () => {
@@ -20,7 +22,7 @@ const sampleQuests = [
   {
     questName: "Saitama Series",
     questDescription: "A series of quests to help you become a hero.",
-    questImage: "https://i.imgur.com/YszkbTB.png",
+    questImage: "https://i.imgur.com/pIbtdfv.png",
     questType: "daily",
     questStatus: "active",
     questPermissions: "public",
@@ -57,7 +59,7 @@ const sampleQuests = [
   {
     questName: "Meditation Challenge",
     questDescription: "Meditate for 30 minutes every day.",
-    questImage: "https://i.imgur.com/PNbhJeK.png",
+    questImage: "https://i.imgur.com/AiAYv1X.png",
     questType: "daily",
     questStatus: "active",
     questPermissions: "public",
@@ -74,18 +76,18 @@ const sampleQuests = [
     questColor: getRandomColor(),
   },
   {
-    questName: "No Sugar Challenge",
-    questDescription: "Avoid consuming sugar for 30 days.",
-    questImage: "https://i.imgur.com/Bvp6g5B.png",
+    questName: "Learning Music Challenge",
+    questDescription: "Learn music consistently for 30 days.",
+    questImage: "https://i.imgur.com/vujGOqC.png",
     questType: "daily",
     questStatus: "active",
     questPermissions: "public",
-    questOwner: "HealthNut",
-    questMembers: ["HealthNut", "FitnessFanatic", "HealthyEater"],
+    questOwner: "MusicMaster",
+    questMembers: ["MusicMaster", "MusicMaster2", "MusicMaster3"],
     questTasks: [
       {
-        taskName: "No Sugar",
-        taskDescription: "Avoid consuming sugar for 30 days.",
+        taskName: "Practice Music",
+        taskDescription: "Practice everyday.",
         taskStatus: "active",
         taskType: "daily",
       },
@@ -95,7 +97,7 @@ const sampleQuests = [
   {
     questName: "30 Day Yoga Challenge",
     questDescription: "Complete 30 days of yoga.",
-    questImage: "https://i.imgur.com/4R8yktG.png",
+    questImage: "https://i.imgur.com/d51O2fG.png",
     questType: "daily",
     questStatus: "active",
     questPermissions: "public",
@@ -115,7 +117,7 @@ const sampleQuests = [
     questName: "Healthy Habits",
     questDescription:
       "Develop a series of healthy habits to improve your overall well-being.",
-    questImage: "https://i.imgur.com/4tfn9f9.png",
+    questImage: "https://i.imgur.com/fp19wds.png",
     questType: "daily",
     questStatus: "active",
     questPermissions: "public",
@@ -146,7 +148,7 @@ const sampleQuests = [
   {
     questName: "Learn a New Language",
     questDescription: "Take on the challenge of learning a new language.",
-    questImage: "https://i.imgur.com/2QjZNrN.png",
+    questImage: "https://i.imgur.com/UXezxeF.png",
     questType: "weekly",
     questStatus: "active",
     questPermissions: "public",
@@ -183,6 +185,8 @@ const sampleQuests = [
 ];
 
 const UserPanel = () => {
+  const [isMobile] = useMediaQuery("(max-width: 767px)");
+
   return (
     <Box
       bgColor="white"
@@ -196,12 +200,68 @@ const UserPanel = () => {
       <Heading color="black" size="lg">
         User Panel | Active Quests
       </Heading>
+
       {sampleQuests.map((q) => {
+        const backgroundImageStyle = q.questImage
+          ? {
+              backgroundImage: `url(${q.questImage})`,
+              backgroundSize: "cover",
+              backgroundPosition: "50% 30%",
+              opacity: 0.15,
+            }
+          : {};
+
+        const questStatus = (
+          <Box
+            position="absolute"
+            top={isMobile ? "7%" : "auto"}
+            bottom={isMobile ? "auto" : "45%"}
+            right={isMobile ? "3%" : 0}
+          >
+            <Text
+              color="black"
+              fontSize="md"
+              transform={isMobile ? "rotate(0deg)" : "rotate(90deg)"}
+            >
+              {q.questStatus.toUpperCase()}
+            </Text>
+          </Box>
+        );
+
+        const questDetails = (
+          <VStack align="left">
+            <Box
+              style={backgroundImageStyle}
+              position="absolute"
+              top={0}
+              left={0}
+              width="100%"
+              height="100%"
+            />
+            <HStack>
+              <Heading color="black" size="lg">
+                {q.questName}
+              </Heading>
+              <Text color="black" fontSize="xl">
+                {q.questType.toUpperCase()}
+              </Text>
+            </HStack>
+
+            <Text color="black" fontSize="sm">
+              {q.questDescription}
+              <br />
+              Created by {q.questOwner}
+              <br />
+              {q.questMembers.length} members | {q.questTasks.length} tasks
+            </Text>
+          </VStack>
+        );
+
         return (
           <Box
             key={q.questName}
             bgColor={q.questColor}
-            py="3%"
+            py="5%"
             px="5%"
             width="100%"
             textColor="black"
@@ -209,32 +269,13 @@ const UserPanel = () => {
             borderColor="gray.200"
             borderRadius="lg"
             boxShadow="lg"
-            mt="1%"
+            my="1%"
+            position="relative"
           >
-            <Heading color="black" size="md">
-              {q.questName}
-            </Heading>
-            <Text color="black" fontSize="sm">
-              {q.questDescription}
-            </Text>
-            {/* <Text color="black" fontSize="sm">
-              {q.questType}
-            </Text>
-            <Text color="black" fontSize="sm">
-              {q.questStatus}
-            </Text>
-            <Text color="black" fontSize="sm">
-              {q.questPermissions}
-            </Text>
-            <Text color="black" fontSize="sm">
-              {q.questOwner}
-            </Text>
-            <Text color="black" fontSize="sm">
-              {q.questMembers}
-            </Text> */}
-            {/* <Text color="black" fontSize="sm">
-              {quest.questTasks}
-            </Text> */}
+            <>
+              {questDetails}
+              {questStatus}
+            </>
           </Box>
         );
       })}
