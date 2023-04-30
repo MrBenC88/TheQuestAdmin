@@ -15,7 +15,6 @@ const Dashboard = () => {
   return (
     <Box boxSize="100%" bgColor="orange.50">
       <DashboardHeader />
-
       <UserPanel />
     </Box>
   );
