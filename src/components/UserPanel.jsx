@@ -11,6 +11,10 @@ import {
   useMediaQuery,
 } from "@chakra-ui/react";
 
+import { useState, useEffect } from "react";
+
+import SearchBar from "./SearchBar";
+
 const getRandomColor = () => {
   const r = Math.floor(Math.random() * 128) + 128;
   const g = Math.floor(Math.random() * 128) + 128;
@@ -186,6 +190,7 @@ const sampleQuests = [
 
 const UserPanel = () => {
   const [isMobile] = useMediaQuery("(max-width: 767px)");
+  const [searchQuery, setSearchQuery] = useState("");
 
   return (
     <Box
@@ -195,110 +200,137 @@ const UserPanel = () => {
       pl="5%"
       pr="5%"
       width="100%"
-      textColor="black"
+      color="black"
     >
-      <Heading color="black" size="lg">
-        User Panel | Your Quests
-      </Heading>
-
-      {sampleQuests.map((q) => {
-        const backgroundImageStyle = q.questImage
-          ? {
-              backgroundImage: `url(${q.questImage})`,
-              backgroundSize: "cover",
-              backgroundPosition: "50% 30%",
-              opacity: 0.15,
-            }
-          : {};
-
-        const questStatus = (
-          <Box
-            position="absolute"
-            top={isMobile ? "7%" : "auto"}
-            bottom={isMobile ? "auto" : "45%"}
-            right={isMobile ? "3%" : 0}
-          >
-            <Text
-              color="black"
-              fontSize={isMobile ? "md" : "2xl"}
-              transform={isMobile ? "rotate(0deg)" : "rotate(90deg)"}
-            >
-              {q.questStatus.toUpperCase()}
-            </Text>
+      {isMobile ? (
+        <VStack pb="2%">
+          <Heading color="black" size="lg">
+            Your Quests
+          </Heading>
+          <Box w="100%">
+            <SearchBar handleChange={setSearchQuery} />
           </Box>
-        );
+        </VStack>
+      ) : (
+        <HStack justify="space-between">
+          <Heading color="black" size="lg">
+            Your Quests
+          </Heading>
+          <Box w="50%">
+            <SearchBar handleChange={setSearchQuery} />
+          </Box>
+        </HStack>
+      )}
 
-        const questDetails = (
-          <VStack align="left">
+      {sampleQuests
+        .filter((q) => {
+          const lowerCaseSearchQuery = searchQuery.toLowerCase();
+          return (
+            q.questName.toLowerCase().includes(lowerCaseSearchQuery) ||
+            q.questDescription.toLowerCase().includes(lowerCaseSearchQuery) ||
+            q.questType.toLowerCase().includes(lowerCaseSearchQuery) ||
+            q.questOwner.toLowerCase().includes(lowerCaseSearchQuery) ||
+            q.questStatus.toLowerCase().includes(lowerCaseSearchQuery)
+          );
+        })
+        .map((q) => {
+          const backgroundImageStyle = q.questImage
+            ? {
+                backgroundImage: `url(${q.questImage})`,
+                backgroundSize: "cover",
+                backgroundPosition: "50% 30%",
+                opacity: 0.15,
+              }
+            : {};
+
+          const questStatus = (
             <Box
-              style={backgroundImageStyle}
               position="absolute"
-              top={0}
-              left={0}
-              width="100%"
-              height="100%"
-            />
-            {isMobile ? (
-              <>
+              top={isMobile ? "7%" : "auto"}
+              bottom={isMobile ? "auto" : "45%"}
+              right={isMobile ? "3%" : 0}
+            >
+              <Text
+                color="black"
+                fontSize={isMobile ? "md" : "2xl"}
+                transform={isMobile ? "rotate(0deg)" : "rotate(90deg)"}
+              >
+                {q.questStatus.toUpperCase()}
+              </Text>
+            </Box>
+          );
+
+          const questDetails = (
+            <VStack align="left">
+              <Box
+                style={backgroundImageStyle}
+                position="absolute"
+                top={0}
+                left={0}
+                width="100%"
+                height="100%"
+              />
+              {isMobile ? (
+                <>
+                  <HStack>
+                    <Heading color="black" size="lg">
+                      {q.questName}
+                    </Heading>
+                  </HStack>
+                  <Text
+                    color="black"
+                    fontSize="xl"
+                    position="absolute"
+                    right="-1%"
+                    top="45%"
+                    transform={"rotate(90deg)"}
+                  >
+                    {q.questType.toUpperCase()}
+                  </Text>
+                </>
+              ) : (
                 <HStack>
                   <Heading color="black" size="lg">
                     {q.questName}
                   </Heading>
+                  <Text color="black" fontSize="xl">
+                    {q.questType.toUpperCase()}
+                  </Text>
                 </HStack>
-                <Text
-                  color="black"
-                  fontSize="xl"
-                  position="absolute"
-                  right="-4.4%"
-                  top="45%"
-                  transform={"rotate(90deg)"}
-                >
-                  {q.questType.toUpperCase()}
-                </Text>
+              )}
+
+              <Text color="black" fontSize="sm" flexWrap w="95%">
+                {q.questDescription}
+                <br />
+                Created by {q.questOwner}
+                <br />
+                {q.questMembers.length} members | {q.questTasks.length} tasks
+              </Text>
+            </VStack>
+          );
+
+          return (
+            <Box
+              key={q.questName}
+              bgColor={q.questColor}
+              py="5%"
+              px="5%"
+              width="100%"
+              textColor="black"
+              border="1px"
+              borderColor="gray.200"
+              borderRadius="lg"
+              boxShadow="lg"
+              my="1%"
+              position="relative"
+            >
+              <>
+                {questDetails}
+                {questStatus}
               </>
-            ) : (
-              <HStack>
-                <Heading color="black" size="lg">
-                  {q.questName}
-                </Heading>
-                <Text color="black" fontSize="xl">
-                  {q.questType.toUpperCase()}
-                </Text>
-              </HStack>
-            )}
-
-            <Text color="black" fontSize="sm" flexWrap w="95%">
-              {q.questDescription}
-              <br />
-              Created by {q.questOwner}
-              <br />
-              {q.questMembers.length} members | {q.questTasks.length} tasks
-            </Text>
-          </VStack>
-        );
-
-        return (
-          <Box
-            key={q.questName}
-            bgColor={q.questColor}
-            py="5%"
-            px="5%"
-            width="100%"
-            textColor="black"
-            border="1px"
-            borderColor="gray.200"
-            borderRadius="lg"
-            boxShadow="lg"
-            my="1%"
-            position="relative"
-          >
-            <>
-              {questDetails}
-              {questStatus}
-            </>
-          </Box>
-        );
-      })}
+            </Box>
+          );
+        })}
     </Box>
   );
 };
