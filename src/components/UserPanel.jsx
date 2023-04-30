@@ -198,7 +198,7 @@ const UserPanel = () => {
       textColor="black"
     >
       <Heading color="black" size="lg">
-        User Panel | Active Quests
+        User Panel | Your Quests
       </Heading>
 
       {sampleQuests.map((q) => {
@@ -220,7 +220,7 @@ const UserPanel = () => {
           >
             <Text
               color="black"
-              fontSize="md"
+              fontSize={isMobile ? "md" : "2xl"}
               transform={isMobile ? "rotate(0deg)" : "rotate(90deg)"}
             >
               {q.questStatus.toUpperCase()}
@@ -238,16 +238,36 @@ const UserPanel = () => {
               width="100%"
               height="100%"
             />
-            <HStack>
-              <Heading color="black" size="lg">
-                {q.questName}
-              </Heading>
-              <Text color="black" fontSize="xl">
-                {q.questType.toUpperCase()}
-              </Text>
-            </HStack>
+            {isMobile ? (
+              <>
+                <HStack>
+                  <Heading color="black" size="lg">
+                    {q.questName}
+                  </Heading>
+                </HStack>
+                <Text
+                  color="black"
+                  fontSize="xl"
+                  position="absolute"
+                  right="-4.4%"
+                  top="45%"
+                  transform={"rotate(90deg)"}
+                >
+                  {q.questType.toUpperCase()}
+                </Text>
+              </>
+            ) : (
+              <HStack>
+                <Heading color="black" size="lg">
+                  {q.questName}
+                </Heading>
+                <Text color="black" fontSize="xl">
+                  {q.questType.toUpperCase()}
+                </Text>
+              </HStack>
+            )}
 
-            <Text color="black" fontSize="sm">
+            <Text color="black" fontSize="sm" flexWrap w="95%">
               {q.questDescription}
               <br />
               Created by {q.questOwner}
