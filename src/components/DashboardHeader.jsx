@@ -25,7 +25,8 @@ import { HamburgerIcon } from "@chakra-ui/icons";
 import { useState } from "react";
 
 const DashboardHeader = () => {
-  const { isOpen, onOpen, onClose, onT } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { currentMode, setCurrentMode } = useState("challenger"); // challenger or admin mode
 
   // Proposed Modules for ADMIN MODE:
   // Account Management: A module that allows creators/administrators to manage their account. They should be able to change their password, update their profile, and view their billing information.
@@ -56,7 +57,7 @@ const DashboardHeader = () => {
   // Support: A module that provides creators/administrators with a way to contact the platform's support team if they have any issues or questions.
 
   // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-  // Modules for User Mode:
+  // Modules for User Mode / Challenger mode:
   // My Quests: A module that allows users to view their quests and track their current quests included completed, in progress, and upcoming quests.
   // This module also enables users to do the actual submission. It will be a list of quest cards that contain the related quest's actual list of tasks.
   // Browse Quests: A module that allows users to browse quests that are available to them. They should be able to see the quest details and join the quest. They can join all public quests or private quests
@@ -80,7 +81,11 @@ const DashboardHeader = () => {
     { tabName: "Marketplace", url: "/market", icon: HamburgerIcon },
     { tabName: "Settings", url: "/settings", icon: HamburgerIcon },
     { tabName: "Support", url: "/support", icon: HamburgerIcon },
-    // { tabName: "Administrator", url: "/admin", icon: HamburgerIcon },
+    {
+      tabName: "Toggle Admin Mode",
+      url: "/admin",
+      icon: HamburgerIcon,
+    },
   ];
 
   return (
