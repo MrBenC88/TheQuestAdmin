@@ -61,6 +61,30 @@ const sampleQuests = [
     questColor: getRandomColor(),
   },
   {
+    questName: "Become the Perfect Idol",
+    questDescription: "Become the perfect idol.",
+    questImage: "https://i.imgur.com/iwfzdnJ.png",
+    questType: "yearly",
+    questStatus: "active",
+    questPermissions: "public",
+    questOwner: "Ai Hoshino",
+    questMembers: ["Idol Master", "Idol Master 2", "Idol Master 3"],
+    questTasks: [
+      {
+        taskName: "Practice Singing",
+        taskDescription: "Practice singing for 1 hour.",
+        taskStatus: "active",
+        taskType: "daily",
+      },
+      {
+        taskName: "Practice Dancing",
+        taskDescription: "Practice dancing for 1 hour.",
+        taskStatus: "active",
+        taskType: "daily",
+      },
+    ],
+  },
+  {
     questName: "Meditation Challenge",
     questDescription: "Meditate for 30 minutes every day.",
     questImage: "https://i.imgur.com/AiAYv1X.png",
@@ -103,7 +127,7 @@ const sampleQuests = [
     questDescription: "Complete 30 days of yoga.",
     questImage: "https://i.imgur.com/d51O2fG.png",
     questType: "daily",
-    questStatus: "active",
+    questStatus: "inactive",
     questPermissions: "public",
     questOwner: "YogaGuru",
     questMembers: ["YogaGuru", "YogaEnthusiast"],
@@ -111,7 +135,7 @@ const sampleQuests = [
       {
         taskName: "Yoga",
         taskDescription: "Complete 30 days of yoga.",
-        taskStatus: "active",
+        taskStatus: "inactive",
         taskType: "daily",
       },
     ],
