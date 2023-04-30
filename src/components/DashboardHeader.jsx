@@ -80,6 +80,7 @@ const DashboardHeader = () => {
     { tabName: "Marketplace", url: "/market", icon: HamburgerIcon },
     { tabName: "Settings", url: "/settings", icon: HamburgerIcon },
     { tabName: "Support", url: "/support", icon: HamburgerIcon },
+    // { tabName: "Administrator", url: "/admin", icon: HamburgerIcon },
   ];
 
   return (
