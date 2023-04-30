@@ -43,6 +43,7 @@ export const sampleQuests = [
       },
     ],
     questColor: getRandomColor(),
+    questIncentive: [-100, 10], // [punishment, reward]
   },
   {
     questId: 2,
@@ -68,6 +69,8 @@ export const sampleQuests = [
         taskType: "daily",
       },
     ],
+    questColor: getRandomColor(),
+    questIncentive: [-100, 10],
   },
   {
     questId: 3,
@@ -88,6 +91,7 @@ export const sampleQuests = [
       },
     ],
     questColor: getRandomColor(),
+    questIncentive: [-100, 10],
   },
   {
     questId: 4,
@@ -108,6 +112,7 @@ export const sampleQuests = [
       },
     ],
     questColor: getRandomColor(),
+    questIncentive: [-100, 10],
   },
   {
     questId: 5,
@@ -128,6 +133,7 @@ export const sampleQuests = [
       },
     ],
     questColor: getRandomColor(),
+    questIncentive: [-100, 10],
   },
   {
     questId: 6,
@@ -161,6 +167,7 @@ export const sampleQuests = [
       },
     ],
     questColor: getRandomColor(),
+    questIncentive: [-100, 10],
   },
   {
     questId: 7,
@@ -199,5 +206,6 @@ export const sampleQuests = [
       },
     ],
     questColor: getRandomColor(),
+    questIncentive: [-100, 10],
   },
 ];
