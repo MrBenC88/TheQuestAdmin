@@ -72,12 +72,12 @@ const QuestPage = () => {
   }, [remainingTime]);
 
   // fetch the data for the quest with the given quest_id here...
-  console.log(sampleQuests, questId);
+  //   console.log(sampleQuests, questId);
   let quest = getQuestById(sampleQuests, questId);
 
-  const backgroundImageStyle = quest.questImage
+  const backgroundImageStyle = quest?.questImage
     ? {
-        backgroundImage: `url(${quest.questImage})`,
+        backgroundImage: `url(${quest?.questImage})`,
         backgroundSize: "cover",
         backgroundPosition: "50% 30%",
         opacity: 0.15,
@@ -96,7 +96,7 @@ const QuestPage = () => {
         fontSize={isMobile ? "md" : "2xl"}
         transform={isMobile ? "rotate(0deg)" : "rotate(90deg)"}
       >
-        {quest.questStatus.toUpperCase()}
+        {quest?.questStatus?.toUpperCase()}
       </Text>
     </Box>
   );
@@ -115,7 +115,7 @@ const QuestPage = () => {
         <>
           <HStack>
             <Heading color="black" size="lg">
-              {quest.questName}
+              {quest?.questName}
             </Heading>
           </HStack>
           <Text
@@ -126,26 +126,27 @@ const QuestPage = () => {
             top="45%"
             transform={"rotate(90deg)"}
           >
-            {quest.questType.toUpperCase()}
+            {quest?.questType?.toUpperCase()}
           </Text>
         </>
       ) : (
         <HStack>
           <Heading color="black" size="lg">
-            {quest.questName}
+            {quest?.questName}
           </Heading>
           <Text color="black" fontSize="xl">
-            {quest.questType.toUpperCase()}
+            {quest?.questType?.toUpperCase()}
           </Text>
         </HStack>
       )}
 
       <Text color="black" fontSize="sm" flexWrap w="95%">
-        {quest.questDescription}
+        {quest?.questDescription}
         <br />
-        Created by {quest.questCreator}
+        Created by {quest?.questCreator}
         <br />
-        {quest.questMembers.length} members | {quest.questTasks.length} tasks
+        {quest?.questMembers?.length} members | {quest?.questTasks?.length}{" "}
+        tasks
       </Text>
     </VStack>
   );
@@ -154,56 +155,70 @@ const QuestPage = () => {
     <Box boxSize="100%" bgColor="orange.50">
       <DashboardHeader />
 
-      <Box
-        bgColor="white"
-        pt="1%"
-        pb="1%"
-        pl="5%"
-        pr="5%"
-        width="100%"
-        color="black"
-      >
-        <Heading color="black" size="lg">
-          {quest.questType.toUpperCase()} | Quest ID: {questId}
-        </Heading>
+      {quest ? (
         <Box
-          key={quest.questName}
-          bgColor="gray.100"
-          py="5%"
-          px="5%"
+          bgColor="white"
+          pt="1%"
+          pb="1%"
+          pl="5%"
+          pr="5%"
           width="100%"
-          textColor="black"
-          border="1px"
-          borderColor="gray.200"
-          borderRadius="lg"
-          boxShadow="lg"
-          my="1%"
-          position="relative"
+          color="black"
         >
-          <>
-            {quest.questName}
-            {questDetails}
-            {questStatus}
-          </>
-        </Box>
-        <Box bgColor="green" p="4%">
-          {quest && (
+          <Heading color="black" size="lg">
+            {quest.questType.toUpperCase()} | Quest ID: {questId}
+          </Heading>
+          <Box
+            key={quest.questName}
+            bgColor="gray.100"
+            py="5%"
+            px="5%"
+            width="100%"
+            textColor="black"
+            border="1px"
+            borderColor="gray.200"
+            borderRadius="lg"
+            boxShadow="lg"
+            my="1%"
+            position="relative"
+          >
             <>
-              <Text textColor="black">{quest.questName}</Text>
-              <Text textColor="black">{quest.questDescription}</Text>
+              {quest.questName}
+              {questDetails}
+              {questStatus}
             </>
-          )}
-          <CountdownTimer remainingTime={remainingTime} />
-          <Stack spacing="4">
-            {quest &&
-              quest.questTasks.map((task) => (
-                <Text key={task.taskName}>{task.taskName}</Text>
-              ))}
-          </Stack>
+          </Box>
+          <Box bgColor="green" p="4%">
+            {quest && (
+              <>
+                <Text textColor="black">{quest.questName}</Text>
+                <Text textColor="black">{quest.questDescription}</Text>
+              </>
+            )}
+            <CountdownTimer remainingTime={remainingTime} />
+            <Stack spacing="4">
+              {quest &&
+                quest.questTasks.map((task) => (
+                  <Text key={task.taskName}>{task.taskName}</Text>
+                ))}
+            </Stack>
 
-          <Button onClick={handleFinalSubmission}>Submit Quest</Button>
+            <Button onClick={handleFinalSubmission}>Submit Quest</Button>
+          </Box>
         </Box>
-      </Box>
+      ) : (
+        <Box
+          bgColor="white"
+          pt="1%"
+          pb="1%"
+          pl="5%"
+          pr="5%"
+          width="100%"
+          color="black"
+        >
+          <Text textColor="black">Loading Data...</Text>
+        </Box>
+      )}
     </Box>
   );
 };
