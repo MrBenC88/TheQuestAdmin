@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Text, Box, useMediaQuery, Progress, Button } from "@chakra-ui/react";
 
+// Note: MODIFY if different quest type. Currently it is only set to 24 hours.
 const CountdownTimer = ({ remainingTime }) => {
   const [countdown, setCountdown] = useState(null);
   const [isMobile] = useMediaQuery("(max-width: 767px)");
@@ -27,13 +28,11 @@ const CountdownTimer = ({ remainingTime }) => {
   }, [remainingTime]);
 
   const calculateProgress = () => {
-    if (!countdown) return 100;
-    const elapsedSeconds = remainingTime - parseInt(countdown.split(" ")[2]);
-    const remainingProgress = (elapsedSeconds / remainingTime) * 100;
-
-    return remainingProgress;
+    // this calculates progress for 24 hours (86400) only
+    if (!remainingTime) return 0;
+    const remainingProgress = (remainingTime / 86400) * 100;
+    return Math.max(0, Math.min(remainingProgress, 100));
   };
-
   return (
     <Box py="1%">
       <Box textAlign="center">
