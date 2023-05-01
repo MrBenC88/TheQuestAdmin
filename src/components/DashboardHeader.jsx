@@ -139,6 +139,12 @@ const DashboardHeader = () => {
                       w="100%"
                       h="50px"
                       justifyContent="flex-start"
+                      _hover={{
+                        bg: "gray.100",
+                        transform: "scale(1.01)",
+                        boxShadow: "5px 5px 15px rgba(0,0,0,0.1)",
+                      }}
+                      transition="0.2s ease"
                     >
                       <HStack p="10px">
                         {/* <Icon as={entry.icon} w={6} h={6} mr="5px" /> */}
