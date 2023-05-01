@@ -188,7 +188,7 @@ const QuestPage = () => {
               {questStatus}
             </>
           </Box>
-          <Box bgColor="green" p="4%">
+          <Box bgColor="gray.100" p="4%" justify="center" align="center">
             {quest && (
               <>
                 <Text textColor="black">{quest.questName}</Text>

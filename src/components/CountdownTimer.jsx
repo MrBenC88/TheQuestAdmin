@@ -14,16 +14,14 @@ const CountdownTimer = ({ remainingTime }) => {
       const distance = endDate - now;
 
       // calculate remaining time in hours, minutes, and seconds
-      const hours = Math.floor(
-        (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-      );
+      const hours = Math.floor(distance / (1000 * 60 * 60));
       const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-      // format countdown string as HH:MM:SS
-      const countdownString = `${hours.toString().padStart(2, "0")}:${minutes
+      // format countdown string as XXh:XXm:XXs
+      const countdownString = `${hours.toString().padStart(2, "0")}h ${minutes
         .toString()
-        .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+        .padStart(2, "0")}m ${seconds.toString().padStart(2, "0")}s`;
 
       // update state with countdown string
       setCountdown(countdownString);
@@ -34,7 +32,7 @@ const CountdownTimer = ({ remainingTime }) => {
   }, [remainingTime]);
 
   return (
-    <Text fontSize="xl" textColor="black">
+    <Text fontSize="6xl" textColor="black">
       {countdown}
     </Text>
   );
