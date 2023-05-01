@@ -4,7 +4,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 export default function App({ Component, pageProps }) {
   return (
     <ChakraProvider>
-      <title>Tech Career Change</title>
+      <title>Life Admin</title>
       <Component {...pageProps} />
     </ChakraProvider>
   );

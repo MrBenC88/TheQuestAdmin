@@ -79,6 +79,7 @@ const DashboardHeader = () => {
     // { tabName: "Analytics", url: "/analytics", icon: HamburgerIcon },
     // { tabName: "Notifications", url: "/notifications", icon: HamburgerIcon },
     { tabName: "Marketplace", url: "/market", icon: HamburgerIcon },
+    { tabName: "Inventory", url: "/inventory", icon: HamburgerIcon },
     { tabName: "Settings", url: "/settings", icon: HamburgerIcon },
     { tabName: "Support", url: "/support", icon: HamburgerIcon },
     {

@@ -150,6 +150,12 @@ const UserPanel = () => {
               boxShadow="lg"
               my="1%"
               position="relative"
+              _hover={{
+                bg: "gray.100",
+                transform: "scale(1.02)",
+                boxShadow: "5px 5px 15px rgba(0,0,0,0.1)",
+              }}
+              transition="0.2s ease"
             >
               <>
                 <Link href={`/dashboard/quest/${q.questId}`}>
