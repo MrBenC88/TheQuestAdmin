@@ -59,7 +59,7 @@ const QuestPage = () => {
       alert("quest completed");
     } else {
       // show error message or do something else
-      //   alert("quest failed");
+      alert("quest failed");
     }
   };
 
@@ -215,17 +215,20 @@ const QuestPage = () => {
             boxSize="100%"
           >
             <CountdownTimer remainingTime={remainingTime} />
+
             <Box borderBottom="1px" py={isMobile ? "5%" : "0%"}>
-              <Text>Rewards/Punishments:</Text>{" "}
+              <Text fontSize={isMobile ? "xl" : "xl"}>
+                Rewards/Punishments:
+              </Text>{" "}
               <HStack
                 boxSize={isMobile ? "90%" : "40%"}
                 justify="space-between"
               >
-                <Text textAlign="left">
+                <Text textAlign="left" fontSize={isMobile ? "xl" : "lg"}>
                   Completion
                   <br /> Failure
                 </Text>
-                <Text textAlign="right">
+                <Text textAlign="right" fontSize={isMobile ? "xl" : "lg"}>
                   {quest.questIncentive[1]} CP
                   <br />
                   {quest.questIncentive[0]} CP
@@ -233,7 +236,7 @@ const QuestPage = () => {
               </HStack>{" "}
               <Text
                 boxSize={isMobile ? "90%" : "40%"}
-                fontSize="sm"
+                fontSize={isMobile ? "md" : "lg"}
                 textAlign="left"
                 py="10px"
               >

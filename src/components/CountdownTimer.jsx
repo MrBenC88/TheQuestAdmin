@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import { Text, Box, useMediaQuery } from "@chakra-ui/react";
+import { useState, useEffect } from "react";
+import { Text, Box, useMediaQuery, Progress, Button } from "@chakra-ui/react";
 
 const CountdownTimer = ({ remainingTime }) => {
   const [countdown, setCountdown] = useState(null);
@@ -26,13 +26,33 @@ const CountdownTimer = ({ remainingTime }) => {
     return () => clearInterval(interval);
   }, [remainingTime]);
 
+  const calculateProgress = () => {
+    if (!countdown) return 100;
+    const elapsedSeconds = remainingTime - parseInt(countdown.split(" ")[2]);
+    const remainingProgress = (elapsedSeconds / remainingTime) * 100;
+
+    return remainingProgress;
+  };
+
   return (
     <Box py="1%">
-      <Text fontSize={isMobile ? "2xl" : "xl"} textColor="black">
-        Quest expiring in:
-      </Text>
-      <Text fontSize={isMobile ? "5xl" : "6xl"} textColor="black">
-        {countdown}
+      <Box textAlign="center">
+        <Text fontSize={isMobile ? "2xl" : "xl"} textColor="black">
+          Quest expiring in:
+        </Text>
+        <Text fontSize={isMobile ? "5xl" : "6xl"} textColor="black">
+          {countdown}
+        </Text>
+      </Box>
+      <Box textAlign="center" bgColor="black">
+        <Progress
+          value={calculateProgress()}
+          size="lg"
+          colorScheme={calculateProgress() < 10 ? "red" : "linkedin"}
+        />
+      </Box>
+      <Text textColor="black" textAlign="right" fontSize="lg">
+        Time Remaining: {calculateProgress().toFixed(7)} %
       </Text>
     </Box>
   );
