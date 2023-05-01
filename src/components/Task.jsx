@@ -22,6 +22,7 @@ const Task = ({ key, task, setCompletedTasks }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [proof, setProof] = useState("");
   const [isComplete, setIsTaskComplete] = useState(false);
+  const [isMobile] = useMediaQuery("(max-width: 767px)");
 
   const handleCompleteTask = () => {
     setIsModalOpen(true);
@@ -40,14 +41,18 @@ const Task = ({ key, task, setCompletedTasks }) => {
   return (
     <>
       <Box
-        boxSize="95%"
+        boxSize={isMobile ? "100%" : "95%"}
         bgColor={isComplete ? "green.300" : "gray.200"}
         p="1%"
         borderRadius="10px"
         key={task.taskName}
       >
         <HStack justify="space-between">
-          <Text fontSize="lg" textAlign="left">
+          <Text
+            fontSize={isMobile ? "md" : "xl"}
+            textAlign="left"
+            w={isMobile ? "80%" : "100%"}
+          >
             {task.taskName} <br />
             Detail: {task.taskDescription}
           </Text>

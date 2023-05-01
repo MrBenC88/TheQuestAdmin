@@ -180,10 +180,8 @@ const QuestPage = () => {
       {quest ? (
         <Box
           bgColor="white"
-          pt="1%"
-          pb="1%"
-          pl="5%"
-          pr="5%"
+          py="1%"
+          px={isMobile ? "3%" : "5%"}
           width="100%"
           color="black"
         >
@@ -217,7 +215,7 @@ const QuestPage = () => {
             boxSize="100%"
           >
             <CountdownTimer remainingTime={remainingTime} />
-            {/* <Box border="1px">
+            <Box borderBottom="1px" py={isMobile ? "5%" : "0%"}>
               <Text>Rewards/Punishments:</Text>{" "}
               <HStack
                 boxSize={isMobile ? "90%" : "40%"}
@@ -242,8 +240,8 @@ const QuestPage = () => {
                 *Challenger Points (CP) apply globally to the challenger's
                 profile. Read more about CP <b>here</b>.
               </Text>
-            </Box> */}
-            <VStack spacing="1" boxSize="100%">
+            </Box>
+            <VStack spacing="1" boxSize="100%" pt={isMobile ? "2%" : "3%"}>
               {quest &&
                 quest.questTasks.map((task) => (
                   <Task
@@ -253,22 +251,27 @@ const QuestPage = () => {
                   />
                 ))}
             </VStack>
-            <Button
-              colorScheme="red"
-              onClick={handleFinalSubmission}
-              px="4%"
-              py="3%"
-            >
-              Give up
-            </Button>
-            <Button
-              colorScheme="green"
-              onClick={handleFinalSubmission}
-              px="4%"
-              py="3%"
-            >
-              Submit Quest
-            </Button>
+
+            <VStack py="3%">
+              <Button
+                colorScheme="green"
+                onClick={handleFinalSubmission}
+                px="4%"
+                py={isMobile ? "10%" : "3%"}
+                w={isMobile ? "100%" : "60%"}
+              >
+                Complete Quest
+              </Button>
+              <Button
+                colorScheme="red"
+                onClick={handleFinalSubmission}
+                px="4%"
+                py={isMobile ? "10%" : "3%"}
+                w={isMobile ? "100%" : "60%"}
+              >
+                Forfeit Quest
+              </Button>
+            </VStack>
           </Box>
         </Box>
       ) : (

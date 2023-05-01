@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { Text, Box } from "@chakra-ui/react";
+import { Text, Box, useMediaQuery } from "@chakra-ui/react";
 
 const CountdownTimer = ({ remainingTime }) => {
   const [countdown, setCountdown] = useState(null);
+  const [isMobile] = useMediaQuery("(max-width: 767px)");
 
   useEffect(() => {
     const endDate = new Date().getTime() + remainingTime * 1000;
@@ -27,10 +28,10 @@ const CountdownTimer = ({ remainingTime }) => {
 
   return (
     <Box py="1%">
-      <Text fontSize="xl" textColor="black">
+      <Text fontSize={isMobile ? "2xl" : "xl"} textColor="black">
         Quest expiring in:
       </Text>
-      <Text fontSize="6xl" textColor="black">
+      <Text fontSize={isMobile ? "5xl" : "6xl"} textColor="black">
         {countdown}
       </Text>
     </Box>
