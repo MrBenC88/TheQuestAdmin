@@ -71,11 +71,11 @@ const Task = ({ key, task, setCompletedTasks }) => {
           <ModalHeader>Submit proof of completion</ModalHeader>
           <ModalCloseButton size="lg" />
           <ModalBody>
-            <Text textColor="white" as="b">
+            <Text textColor="black" as="b">
               {task.taskName}
             </Text>
 
-            <Text textColor="white" py="10%">
+            <Text textColor="black" py="10%">
               Details: <br />
               {task.taskDescription}
             </Text>
