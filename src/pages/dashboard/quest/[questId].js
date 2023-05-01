@@ -24,6 +24,7 @@ import moment from "moment-timezone";
 import { useRouter } from "next/router";
 import DashboardHeader from "../../../components/DashboardHeader";
 import CountdownTimer from "../../../components/CountdownTimer";
+import Task from "../../../components/Task";
 import {
   Box,
   Button,
@@ -42,14 +43,30 @@ const getQuestById = (quests, questId) => {
 
 const QuestPage = () => {
   const router = useRouter();
+  const [completedTasks, setCompletedTasks] = useState(0);
+  const [isQuestCompleted, setIsQuestCompleted] = useState(false);
+
   const [isMobile] = useMediaQuery("(max-width: 767px)");
   const { questId } = router.query;
   const [remainingTime, setRemainingTime] = useState(
     moment.tz("America/Los_Angeles").endOf("day").diff(moment(), "seconds")
   );
+  let quest = getQuestById(sampleQuests, questId);
 
   const handleFinalSubmission = () => {
-    // Submit final quest submission
+    if (isQuestCompleted) {
+      // give user point for completing the quest
+      alert("quest completed");
+    } else {
+      // show error message or do something else
+      //   alert("quest failed");
+    }
+  };
+
+  const handleTaskSubmit = () => {
+    setIsModalOpen(false);
+    setIsTaskComplete(true);
+    setCompletedTasks((prevCompletedTasks) => prevCompletedTasks + 1);
   };
 
   useEffect(() => {
@@ -71,9 +88,14 @@ const QuestPage = () => {
     }
   }, [remainingTime]);
 
+  useEffect(() => {
+    if (completedTasks === quest?.questTasks?.length) {
+      setIsQuestCompleted(true);
+    }
+  }, [completedTasks, quest]);
+
   // fetch the data for the quest with the given quest_id here...
   //   console.log(sampleQuests, questId);
-  let quest = getQuestById(sampleQuests, questId);
 
   const backgroundImageStyle = quest?.questImage
     ? {
@@ -188,22 +210,65 @@ const QuestPage = () => {
               {questStatus}
             </>
           </Box>
-          <Box bgColor="gray.100" p="4%" justify="center" align="center">
-            {quest && (
-              <>
-                <Text textColor="black">{quest.questName}</Text>
-                <Text textColor="black">{quest.questDescription}</Text>
-              </>
-            )}
+          <Box
+            bgColor="gray.100"
+            justify="center"
+            align="center"
+            boxSize="100%"
+          >
             <CountdownTimer remainingTime={remainingTime} />
-            <Stack spacing="4">
+            {/* <Box border="1px">
+              <Text>Rewards/Punishments:</Text>{" "}
+              <HStack
+                boxSize={isMobile ? "90%" : "40%"}
+                justify="space-between"
+              >
+                <Text textAlign="left">
+                  Completion
+                  <br /> Failure
+                </Text>
+                <Text textAlign="right">
+                  {quest.questIncentive[1]} CP
+                  <br />
+                  {quest.questIncentive[0]} CP
+                </Text>
+              </HStack>{" "}
+              <Text
+                boxSize={isMobile ? "90%" : "40%"}
+                fontSize="sm"
+                textAlign="left"
+                py="10px"
+              >
+                *Challenger Points (CP) apply globally to the challenger's
+                profile. Read more about CP <b>here</b>.
+              </Text>
+            </Box> */}
+            <VStack spacing="1" boxSize="100%">
               {quest &&
                 quest.questTasks.map((task) => (
-                  <Text key={task.taskName}>{task.taskName}</Text>
+                  <Task
+                    key={task.taskName}
+                    task={task}
+                    setCompletedTasks={setCompletedTasks}
+                  />
                 ))}
-            </Stack>
-
-            <Button onClick={handleFinalSubmission}>Submit Quest</Button>
+            </VStack>
+            <Button
+              colorScheme="red"
+              onClick={handleFinalSubmission}
+              px="4%"
+              py="3%"
+            >
+              Give up
+            </Button>
+            <Button
+              colorScheme="green"
+              onClick={handleFinalSubmission}
+              px="4%"
+              py="3%"
+            >
+              Submit Quest
+            </Button>
           </Box>
         </Box>
       ) : (
