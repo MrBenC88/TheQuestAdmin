@@ -56,7 +56,7 @@ const UserPanel = () => {
             q.questName.toLowerCase().includes(lowerCaseSearchQuery) ||
             q.questDescription.toLowerCase().includes(lowerCaseSearchQuery) ||
             q.questType.toLowerCase().includes(lowerCaseSearchQuery) ||
-            q.questOwner.toLowerCase().includes(lowerCaseSearchQuery) ||
+            q.questCreator.toLowerCase().includes(lowerCaseSearchQuery) ||
             q.questStatus.toLowerCase().includes(lowerCaseSearchQuery)
           );
         })
@@ -129,7 +129,7 @@ const UserPanel = () => {
               <Text color="black" fontSize="sm" flexWrap w="95%">
                 {q.questDescription}
                 <br />
-                Created by {q.questOwner}
+                Created by {q.questCreator}
                 <br />
                 {q.questMembers.length} members | {q.questTasks.length} tasks
               </Text>

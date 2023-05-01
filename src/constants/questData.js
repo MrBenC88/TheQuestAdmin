@@ -7,14 +7,15 @@ const getRandomColor = () => {
 
 export const sampleQuests = [
   {
-    questId: "1",
+    questId: "1", // replace with mongodb id
     questName: "Saitama Series",
     questDescription: "A series of quests to help you become a hero.",
     questImage: "https://i.imgur.com/pIbtdfv.png",
     questType: "daily",
     questStatus: "active",
     questPermissions: "public",
-    questOwner: "Saitama",
+    questCreator: "Saitama",
+    questCreatorId: "1",
     questMembers: ["Saitama", "Genos", "King", "Mumen Rider"],
     questTasks: [
       {
@@ -53,7 +54,8 @@ export const sampleQuests = [
     questType: "yearly",
     questStatus: "active",
     questPermissions: "public",
-    questOwner: "Ai Hoshino",
+    questCreator: "Ai Hoshino",
+    questCreatorId: "2",
     questMembers: ["Idol Master", "Idol Master 2", "Idol Master 3"],
     questTasks: [
       {
@@ -80,7 +82,8 @@ export const sampleQuests = [
     questType: "daily",
     questStatus: "active",
     questPermissions: "public",
-    questOwner: "User123",
+    questCreator: "User123",
+    questCreatorId: "3",
     questMembers: ["User123", "User456"],
     questTasks: [
       {
@@ -101,7 +104,8 @@ export const sampleQuests = [
     questType: "daily",
     questStatus: "active",
     questPermissions: "public",
-    questOwner: "MusicMaster",
+    questCreator: "MusicMaster",
+    questCreatorId: "4",
     questMembers: ["MusicMaster", "MusicMaster2", "MusicMaster3"],
     questTasks: [
       {
@@ -122,7 +126,8 @@ export const sampleQuests = [
     questType: "daily",
     questStatus: "inactive",
     questPermissions: "public",
-    questOwner: "YogaGuru",
+    questCreator: "YogaGuru",
+    questCreatorId: "5",
     questMembers: ["YogaGuru", "YogaEnthusiast"],
     questTasks: [
       {
@@ -144,7 +149,8 @@ export const sampleQuests = [
     questType: "daily",
     questStatus: "active",
     questPermissions: "public",
-    questOwner: "Healthy Habits Inc.",
+    questCreator: "Healthy Habits Inc.",
+    questCreatorId: "6",
     questMembers: ["John Doe", "Jane Smith", "Bob Johnson"],
     questTasks: [
       {
@@ -177,7 +183,8 @@ export const sampleQuests = [
     questType: "weekly",
     questStatus: "active",
     questPermissions: "public",
-    questOwner: "Language Learners Club",
+    questCreator: "Language Learners Club",
+    questCreatorId: "7",
     questMembers: [
       "Maria Garcia",
       "Yuto Nakamura",
