@@ -1,11 +1,8 @@
-{
-  /* render the quest details here... */
-}
-{
-  /* A quest consists of a list of tasks */
-}
-{
-  /* Structure:
+/* render the quest details here... */
+
+/* A quest consists of a list of tasks */
+
+/* Structure:
       - Show Quest Bundle Details First also show count down, and all details. Daily Quests are tasks that must have all the tasks submitted and completed by timelimit
       - Show give up button and submit entire quest button
       - Show Rewards and Punishments for the Quest 
@@ -13,11 +10,11 @@
       - Each Task will open a modal with the task details and allow the user to submit the task. It will take full screen and have a close button.
         - The modal will have a button to submit the task. The button will be disabled until the user has completed the task.
       */
-}
-{
-  /* create different components for each quest type: daily, weekly, yearly, one off
+
+// TODO: Create separate components for each quest type!
+/* create different components for each quest type: daily, weekly, yearly, one off
       Also ensure to account for different submission types, etc.  */
-}
+
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import moment from "moment-timezone";
