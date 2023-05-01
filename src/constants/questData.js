@@ -7,7 +7,7 @@ const getRandomColor = () => {
 
 export const sampleQuests = [
   {
-    questId: 1,
+    questId: "1",
     questName: "Saitama Series",
     questDescription: "A series of quests to help you become a hero.",
     questImage: "https://i.imgur.com/pIbtdfv.png",
@@ -46,7 +46,7 @@ export const sampleQuests = [
     questIncentive: [-100, 10], // [punishment, reward]
   },
   {
-    questId: 2,
+    questId: "2",
     questName: "Become the Perfect Idol",
     questDescription: "Become the perfect idol.",
     questImage: "https://i.imgur.com/iwfzdnJ.png",
@@ -73,7 +73,7 @@ export const sampleQuests = [
     questIncentive: [-100, 10],
   },
   {
-    questId: 3,
+    questId: "3",
     questName: "Meditation Challenge",
     questDescription: "Meditate for 30 minutes every day.",
     questImage: "https://i.imgur.com/AiAYv1X.png",
@@ -94,7 +94,7 @@ export const sampleQuests = [
     questIncentive: [-100, 10],
   },
   {
-    questId: 4,
+    questId: "4",
     questName: "Learning Music Challenge",
     questDescription: "Learn music consistently for 30 days.",
     questImage: "https://i.imgur.com/vujGOqC.png",
@@ -115,7 +115,7 @@ export const sampleQuests = [
     questIncentive: [-100, 10],
   },
   {
-    questId: 5,
+    questId: "5",
     questName: "30 Day Yoga Challenge",
     questDescription: "Complete 30 days of yoga.",
     questImage: "https://i.imgur.com/d51O2fG.png",
@@ -136,7 +136,7 @@ export const sampleQuests = [
     questIncentive: [-100, 10],
   },
   {
-    questId: 6,
+    questId: "6",
     questName: "Healthy Habits",
     questDescription:
       "Develop a series of healthy habits to improve your overall well-being.",
@@ -170,7 +170,7 @@ export const sampleQuests = [
     questIncentive: [-100, 10],
   },
   {
-    questId: 7,
+    questId: "7",
     questName: "Learn a New Language",
     questDescription: "Take on the challenge of learning a new language.",
     questImage: "https://i.imgur.com/UXezxeF.png",
