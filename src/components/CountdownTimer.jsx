@@ -42,7 +42,7 @@ const CountdownTimer = ({ remainingTime, countdown }) => {
           {countdown}
         </Text>
       </Box>
-      <Box textAlign="center" bgColor="black">
+      <Box textAlign="center">
         <Progress
           value={calculateProgress()}
           size="lg"
@@ -53,7 +53,7 @@ const CountdownTimer = ({ remainingTime, countdown }) => {
               ? "yellow"
               : "linkedin"
           }
-          bg="gray.200"
+          bg="gray.700"
         />
       </Box>
       <Text textColor="black" textAlign="right" fontSize="lg">
