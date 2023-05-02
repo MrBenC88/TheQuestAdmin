@@ -67,7 +67,8 @@ const DashboardHeader = () => {
   // Quest specific coins can only be used to purchase quests and quest specific rewards. Global coins can be used to purchase anything on the platform.
   // Settings: A module that allows users to configure the platform's settings, such as the theme, language, and access control.
   // Support: A module that provides users with a way to contact the platform's support team if they have any issues or questions.
-
+  // Profile: A module that allows users to view their public profile and view all their acheivements, streaks, and quests they have completed. They can also see the challenger points
+  // and events they attended as well as badges.
   const menuItems = [
     { tabName: "My Quests", url: "/dashboard", icon: HamburgerIcon },
     {
@@ -82,6 +83,7 @@ const DashboardHeader = () => {
     { tabName: "Inventory", url: "/inventory", icon: HamburgerIcon },
     { tabName: "Settings", url: "/settings", icon: HamburgerIcon },
     { tabName: "Support", url: "/support", icon: HamburgerIcon },
+    { tabName: "Profile", url: "/profile", icon: HamburgerIcon },
     {
       tabName: "Toggle Admin Mode",
       url: "/admin",
