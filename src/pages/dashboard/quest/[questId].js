@@ -42,6 +42,7 @@ const QuestPage = () => {
   const router = useRouter();
   const [completedTasks, setCompletedTasks] = useState(0);
   const [isQuestCompleted, setIsQuestCompleted] = useState(false);
+  const [countdown, setCountdown] = useState(null);
 
   const [isMobile] = useMediaQuery("(max-width: 767px)");
   const { questId } = router.query;
@@ -59,6 +60,30 @@ const QuestPage = () => {
       alert("quest failed");
     }
   };
+
+  useEffect(() => {
+    const endDate = new Date().getTime() + remainingTime * 1000;
+
+    const updateCountdown = () => {
+      const now = new Date().getTime();
+      const distance = endDate - now;
+
+      const hours = Math.floor(distance / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      const countdownString = `${hours.toString().padStart(2, "0")}h ${minutes
+        .toString()
+        .padStart(2, "0")}m ${seconds.toString().padStart(2, "0")}s`;
+
+      setCountdown(countdownString);
+    };
+
+    updateCountdown(); // Update the countdown immediately upon mounting
+    const interval = setInterval(updateCountdown, 1000); // Update the countdown every second
+
+    return () => clearInterval(interval);
+  }, [remainingTime]);
 
   const handleTaskSubmit = () => {
     setIsModalOpen(false);
@@ -211,7 +236,10 @@ const QuestPage = () => {
             align="center"
             boxSize="100%"
           >
-            <CountdownTimer remainingTime={remainingTime} />
+            <CountdownTimer
+              remainingTime={remainingTime}
+              countdown={countdown}
+            />
 
             <Box borderBottom="1px" py={isMobile ? "5%" : "0%"}>
               <Text fontSize={isMobile ? "xl" : "xl"}>

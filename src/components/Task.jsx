@@ -57,7 +57,7 @@ const Task = ({ key, task, setCompletedTasks }) => {
             Detail: {task.taskDescription}
           </Text>
           <Button
-            colorScheme="green"
+            colorScheme="linkedin"
             onClick={handleCompleteTask}
             disabled={isComplete}
           >
