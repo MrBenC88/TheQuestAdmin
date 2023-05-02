@@ -53,6 +53,7 @@ const CountdownTimer = ({ remainingTime, countdown }) => {
               ? "yellow"
               : "linkedin"
           }
+          bg="gray.200"
         />
       </Box>
       <Text textColor="black" textAlign="right" fontSize="lg">
