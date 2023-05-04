@@ -4,6 +4,7 @@ const AuthComponent = () => {
   const { data: session, status } = useSession();
   console.log(session);
   console.log(session?.user?.email);
+
   return (
     <div>
       {!session && (
