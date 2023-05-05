@@ -27,7 +27,7 @@ const callbacks = {
       if (!session.user.role) {
         customFields.role = "CHALLENGER";
       }
-
+      // TODO: CHECK TO ENSURE USERNAME DOESNT ALREADY EXIST FOR UPDATING USERNAME ROUTE
       // If the user does not have a username, set the default username
       if (!session.user.username) {
         customFields.username = email.split("@")[0];
