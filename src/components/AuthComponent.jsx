@@ -15,7 +15,8 @@ const AuthComponent = () => {
       )}
       {session && (
         <>
-          Signed in as {session.user.email}. <br />
+          Signed in as {session.user.email}. | {session.user.id} |{" "}
+          {session.user.username} <br />
           <button onClick={() => signOut()}>Sign out</button>
         </>
       )}

@@ -5,7 +5,9 @@ import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
 import clientPromise from "../../../../lib/mongodb";
 
 const callbacks = {
-  session: async (session, user) => {
+  session: async (session, sessionToken) => {
+    console.log("Session:", session);
+    console.log("sessionToken:", sessionToken);
     try {
       const client = await clientPromise;
       if (typeof client.db !== "function") {
@@ -14,7 +16,23 @@ const callbacks = {
       }
       console.log("CHECK!!!!!:" + client);
 
-      if (user) console.log("OUR USER:" + user);
+      const db = client.db("test");
+      const userCollection = db.collection("users");
+
+      const { name, email, image } = session.user;
+
+      const customFields = {
+        role: "CHALLENGER",
+        username: email.split("@")[0],
+      };
+
+      const updatedUser = await userCollection.findOneAndUpdate(
+        { email: email },
+        { $set: { name, email, image, ...customFields } },
+        { upsert: true, returnOriginal: false }
+      );
+
+      console.log("updatedUser:", updatedUser);
     } catch (error) {
       console.error("Error updating user details in MongoDB:", error);
     }
