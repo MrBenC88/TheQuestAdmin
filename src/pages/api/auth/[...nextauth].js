@@ -21,10 +21,17 @@ const callbacks = {
 
       const { name, email, image } = session.user;
 
-      const customFields = {
-        role: "CHALLENGER",
-        username: email.split("@")[0],
-      };
+      const customFields = {};
+
+      // If the user does not have a role, set the default role
+      if (!session.user.role) {
+        customFields.role = "CHALLENGER";
+      }
+
+      // If the user does not have a username, set the default username
+      if (!session.user.username) {
+        customFields.username = email.split("@")[0];
+      }
 
       const updatedUser = await userCollection.findOneAndUpdate(
         { email: email },
