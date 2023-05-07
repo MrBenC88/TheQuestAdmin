@@ -1,0 +1,81 @@
+export const sampleQuestPOSTBodyPUBLIC = {
+  questName: "Saitama Series",
+  questDescription: "A series of quests to help you become a hero.",
+  questImage: "https://i.imgur.com/pIbtdfv.png",
+  questType: "daily",
+  questStatus: "active",
+  questPermissions: "public",
+  questCreator: "Saitama",
+  questCreatorId: "6158b5f50d1c9546f7e078e1",
+  questTasks: [
+    {
+      taskName: "100 Pushups",
+      taskDescription: "Do 100 pushups.",
+      taskStatus: "incomplete",
+      taskType: "daily",
+    },
+    {
+      taskName: "100 Situps",
+      taskDescription: "Do 100 situps.",
+      taskStatus: "incomplete",
+      taskType: "daily",
+    },
+    {
+      taskName: "100 Squats",
+      taskDescription: "Do 100 squats.",
+      taskStatus: "incomplete",
+      taskType: "daily",
+    },
+    {
+      taskName: "10km Run",
+      taskDescription: "Run 10km.",
+      taskStatus: "incomplete",
+      taskType: "daily",
+    },
+  ],
+  questColor: "rgb(211, 139, 255)",
+  punishment: -100,
+  reward: 10,
+  inviteCode: "SAITAMA1",
+};
+
+export const sampleQuestPOSTBodyPRIVATE = {
+  questName: "Private!! Saitama Series",
+  questDescription: "A series of quests to help you become a hero.",
+  questImage: "https://i.imgur.com/pIbtdfv.png",
+  questType: "daily",
+  questStatus: "active",
+  questPermissions: "private",
+  questCreator: "Saitama",
+  questCreatorId: "6158b5f50d1c9546f7e078e1",
+  questTasks: [
+    {
+      taskName: "100 Pushups",
+      taskDescription: "Do 100 pushups.",
+      taskStatus: "incomplete",
+      taskType: "daily",
+    },
+    {
+      taskName: "100 Situps",
+      taskDescription: "Do 100 situps.",
+      taskStatus: "incomplete",
+      taskType: "daily",
+    },
+    {
+      taskName: "100 Squats",
+      taskDescription: "Do 100 squats.",
+      taskStatus: "incomplete",
+      taskType: "daily",
+    },
+    {
+      taskName: "10km Run",
+      taskDescription: "Run 10km.",
+      taskStatus: "incomplete",
+      taskType: "daily",
+    },
+  ],
+  questColor: "rgb(211, 139, 255)",
+  punishment: -100,
+  reward: 10,
+  inviteCode: "PRIVATESAITAMA1",
+};

@@ -50,6 +50,11 @@ const questSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  inviteCode: {
+    type: String,
+    required: true,
+    unique: true,
+  },
 });
 
 let Quest;

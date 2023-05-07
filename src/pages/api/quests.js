@@ -1,4 +1,5 @@
 //   Quest API
+// This handles the global quest list of both private and public quests
 // pages/api/quests.js
 import { connect, disconnect } from "../../../lib/mongoose";
 import Quest from "./models/Quest";
@@ -48,7 +49,7 @@ export default async function handler(req, res) {
             throw new Error("Request body is missing");
           }
 
-          const newQuest = req.body;
+          let newQuest = req.body;
 
           const quest = new Quest(newQuest);
           await quest.save();
