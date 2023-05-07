@@ -21,7 +21,7 @@ export default async function handler(req, res) {
       // http://localhost:3000/api/quests?private=false
 
       // default public
-      // http://localhost:3000/api/quests
+      // http://localhost:3000/api/quests?_id=645774ee913871c1773f6d66
       case "GET":
         try {
           const { private: isPrivate } = req.query;
@@ -33,8 +33,17 @@ export default async function handler(req, res) {
             query.questPermissions = "public";
           }
 
-          const quests = await Quest.find(query);
-          res.status(200).json({ quests });
+          if (_id) {
+            const quest = await Quest.findById(_id);
+            if (!quest) {
+              res.status(404).json({ error: "Quest not found" });
+            } else {
+              res.status(200).json({ quest });
+            }
+          } else {
+            const quests = await Quest.find(query);
+            res.status(200).json({ quests });
+          }
         } catch (error) {
           console.error(error);
           res
