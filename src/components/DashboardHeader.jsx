@@ -20,13 +20,15 @@ import {
   Link,
   Icon,
 } from "@chakra-ui/react";
+import { signIn, signOut, useSession } from "next-auth/react";
+
 import { HamburgerIcon } from "@chakra-ui/icons";
 
 import { useState } from "react";
 
 const DashboardHeader = () => {
+  const { data: session, status } = useSession();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { currentMode, setCurrentMode } = useState("challenger"); // challenger or admin mode
 
   // Proposed Modules for ADMIN MODE:
   // Account Management: A module that allows creators/administrators to manage their account. They should be able to change their password, update their profile, and view their billing information.
@@ -100,25 +102,39 @@ const DashboardHeader = () => {
           </Button>
           <Flex alignItems="left" p="10px">
             <Heading as="h1" size={"md"} color="black">
-              Life Admin | Welcome Challenger
+              {session
+                ? `Life Admin | Welcome ${session.user.name}`
+                : "Life Admin | Welcome Challenger"}
             </Heading>
           </Flex>
         </HStack>
 
-        <a href="/dashboard">
-          <Button colorScheme="linkedin" mt={2} size={"md"}>
-            Logout
-          </Button>
-        </a>
+        <Button
+          colorScheme="linkedin"
+          mt={2}
+          size={"md"}
+          onClick={session ? () => signOut() : () => signIn("google")}
+        >
+          {session ? "Log out" : "Log in"}
+        </Button>
       </HStack>
       <Drawer placement="left" onClose={onClose} isOpen={isOpen} size={"xs"}>
         <DrawerOverlay />
         <DrawerContent>
           <DrawerHeader borderBottomWidth="1px" bgColor="white">
             <HStack>
-              <Avatar name="AdminUser" size="lg" src={"adminuser"} />
+              <Avatar
+                size="lg"
+                src={
+                  session
+                    ? session.user.image
+                    : "https://i.imgur.com/IRXSGCY_d.webp?maxwidth=760&fidelity=grand"
+                }
+              />
               <Box>
-                <Text textColor="black">NormalUser</Text>
+                <Text textColor="black">
+                  {session ? session.user.name : "NormalUser"}
+                </Text>
                 {/* <Link to={`/profile/${user.googleId}`}> */}
                 <Link to={`/`}>
                   <Text fontSize="md" textColor="black">

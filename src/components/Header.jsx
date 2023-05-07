@@ -9,6 +9,7 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import * as URL_CONSTANTS from "../constants/constants.js";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 const menuItems = [
   {
@@ -27,10 +28,10 @@ const menuItems = [
     linkName: "Company",
     linkPath: "/company",
   },
-  {
-    linkName: "Log in",
-    linkPath: "/login",
-  },
+  // {
+  //   linkName: "Log in",
+  //   linkPath: "/login",
+  // },
   // {
   //   linkName: "Resources",
   //   linkPath: URL_CONSTANTS.TCC_NOTION_URL,
@@ -46,6 +47,7 @@ const menuItems = [
   // },
 ];
 const Header = () => {
+  const { data: session, status } = useSession();
   const isMobile = useBreakpointValue({ base: true, md: false });
 
   return (
@@ -95,14 +97,25 @@ const Header = () => {
               </Box>{" "}
             </Link>
           );
-        })}
-        <a href={URL_CONSTANTS.DISCORD_URL}>
+        })}{" "}
+        <Box py={isMobile ? 1 : 4} px={5}>
+          <Heading
+            sx={{ cursor: "pointer" }}
+            as="h1"
+            size={isMobile ? "lg" : "sm"}
+            textColor="black"
+            onClick={session ? () => signOut() : () => signIn("google")}
+          >
+            {session ? "Log out" : "Log in"}
+          </Heading>
+        </Box>
+        <a href="/dashboard">
           <Button
             colorScheme="linkedin"
             mt={isMobile ? 4 : 2}
             size={isMobile ? "lg" : "md"}
           >
-            Get Started
+            {session ? "Dashboard" : "Get Started"}
           </Button>
         </a>
       </Flex>
