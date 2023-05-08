@@ -57,9 +57,6 @@ export default async function handler(req, res) {
       break;
 
     case "PUT":
-      // Handle PUT requests here
-      // we only allow authenticated users to update their own profile
-
       // PUT req to: http://localhost:3000/api/users
 
       // UPDATE by userId, username, or email only the following fields
@@ -87,10 +84,8 @@ export default async function handler(req, res) {
       
       */
       try {
+        // TODO: PROTECT THIS ROUTE WITH AUTHENTICATION
         const { userId, username, email, updateData } = req.body;
-
-        // Check if the authenticated user is the owner
-        // const userSession = req.session.user;
 
         // Filter out the allowed fields for update
         const allowedUpdates = [
