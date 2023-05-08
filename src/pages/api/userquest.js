@@ -22,31 +22,6 @@ export default async function handler(req, res) {
       return;
     }
 
-    /**
-     * 
-Note that we have many layers to our json entries. 
-Everything is easy to update with the userquest PUT req and get req. 
-
-However we need queries that provide more info. 
-
-Please implement 
-GET routes
-- Get submissionBatchSchema entry of a userQuest of given questId, also have an 
-optional date param that will return the most recent createdat. 
-- Get a specific task in the submissionBatchschema entry given questId and taskId
-- Get a specific proofSchema entry given taskid, questid
-
-PUT routes
-- update an entry in the userQuestSchema  
-- update an entry in the submissionBatchSchema 
-- update a proofschema entry in the tasksubmissionschema
-
-DELETE routes
-- delete an entry in the userQuestSchema  
-- delete an entry in the submissionBatchSchema 
-- delete  a proofschema entry in the tasksubmissionschema
-     */
-
     switch (req.method) {
       case "GET":
         await get(req, res);
@@ -83,6 +58,11 @@ const get = async (req, res) => {
 }
 
  */
+
+// The PUT request is our bread and butter. We will modify the updateData for the additional or removal
+// of any of the fields in the UserQuest model.
+// This is specifically useful for add/remove of the submissionBatchSchema, taskSubmissionSchema,
+// or proofSchema
 const put = async (req, res) => {
   const updateData = req.body;
   try {
