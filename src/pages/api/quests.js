@@ -22,15 +22,21 @@ export default async function handler(req, res) {
 
       // default public
       // http://localhost:3000/api/quests?_id=645774ee913871c1773f6d66
+
+      // Get by invite code
+      // http://localhost:3000/api/quests?inviteCode=HelloWorld
       case "GET":
         try {
-          const { private: isPrivate } = req.query;
+          const { private: isPrivate, inviteCode } = req.query;
 
           let query = {};
           if (isPrivate === "true") {
             query.questPermissions = "private";
           } else {
             query.questPermissions = "public";
+          }
+          if (inviteCode) {
+            query.inviteCode = inviteCode;
           }
 
           if (_id) {
