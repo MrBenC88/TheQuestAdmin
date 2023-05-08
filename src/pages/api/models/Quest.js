@@ -1,7 +1,7 @@
 // models/Quest.js
 import mongoose from "mongoose";
 
-export const taskSchema = new mongoose.Schema({
+const taskSchema = new mongoose.Schema({
   taskName: { type: String, required: true },
   taskDescription: { type: String, required: true },
   taskStatus: {
@@ -17,7 +17,7 @@ export const taskSchema = new mongoose.Schema({
   },
 });
 
-export const questSchema = new mongoose.Schema({
+const questSchema = new mongoose.Schema({
   questName: { type: String, required: true },
   questDescription: { type: String, required: true },
   questImage: { type: String, required: false },
