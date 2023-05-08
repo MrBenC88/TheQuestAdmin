@@ -7,6 +7,7 @@
 
 import { connect, disconnect } from "../../../lib/mongoose";
 import UserQuest from "./models/UserQuest";
+import Quest from "./models/Quest";
 import mongoose from "mongoose";
 
 export default async function handler(req, res) {
@@ -39,11 +40,14 @@ export default async function handler(req, res) {
 // GET by userId
 // http://localhost:3000/api/userquests?userId=64588a88bfde2e54575e099a
 const get = async (req, res) => {
-  const userQuests = await UserQuest.find({ userId: req.query.userId });
+  const userQuests = await UserQuest.find({ userId: req.query.userId })
+    .populate("questId") // Add this line to populate the specific quest
+    .exec(); // Use exec() to execute the query
   res.status(200).json(userQuests);
 };
 
 // POST by userId
+// Creates initial UserQuest for a user and adds it to the userquests collection
 // Put QuestId in body
 // http://localhost:3000/api/userquests?userId=64588a88bfde2e54575e099a
 /** Example
@@ -55,6 +59,30 @@ const get = async (req, res) => {
 const post = async (req, res) => {
   const { questId } = req.body;
 
+  // Retrieve the Quest and its tasks
+  const quest = await Quest.findById(questId).exec();
+
+  // Create an initial taskSubmissions array based on the tasks found in the questTasks array
+  let taskSubmissions = quest.questTasks.map((task) => ({
+    taskId: task._id,
+    completed: false,
+    proof: {
+      type: "auto",
+      value: "",
+      submittedAt: null,
+    },
+    updatedAt: Date.now(),
+    questId: questId,
+  }));
+
+  const newSubmissionBatch = {
+    userId: req.query.userId,
+    questId: questId,
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    taskSubmissions: taskSubmissions,
+  };
+
   const newUserQuest = {
     userId: req.query.userId,
     questId: questId,
@@ -62,13 +90,13 @@ const post = async (req, res) => {
     userQuestStatus: "inprogress",
     points: 0,
     streak: 0,
-    taskSubmissions: [],
+    submissionBatches: [newSubmissionBatch], // Update the newUserQuest with the generated taskSubmissions
   };
 
   try {
     const userQuest = await UserQuest.create(newUserQuest);
     res.status(201).json(userQuest);
   } catch (error) {
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ message: "Internal Server Error: " + error });
   }
 };

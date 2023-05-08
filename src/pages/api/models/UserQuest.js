@@ -8,9 +8,9 @@ const proofSchema = new mongoose.Schema(
     type: {
       type: String,
       enum: ["photo", "video", "text", "auto"],
-      required: true,
+      required: false,
     },
-    value: { type: String, required: true },
+    value: { type: String, required: false },
     submittedAt: { type: Date, default: Date.now },
   },
   { _id: false }
@@ -20,7 +20,7 @@ const taskSubmissionSchema = new mongoose.Schema({
   taskId: { type: mongoose.Schema.Types.ObjectId, ref: "Task" },
   completed: { type: Boolean, default: false },
   proof: proofSchema,
-  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 });
 
 // This schema is for the task submission.
@@ -32,7 +32,8 @@ const submissionBatchSchema = new mongoose.Schema({
     required: true,
     ref: "Quest",
   },
-  createdAt: { type: Date, required: true },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, required: true },
   taskSubmissions: [taskSubmissionSchema],
 });
 
@@ -61,7 +62,7 @@ const userQuestSchema = new mongoose.Schema({
   points: { type: Number, default: 0 },
   streak: { type: Number, default: 0 },
   lastSubmitted: { type: Date },
-  taskSubmissions: [submissionBatchSchema],
+  submissionBatches: [submissionBatchSchema],
 });
 
 let UserQuest;
