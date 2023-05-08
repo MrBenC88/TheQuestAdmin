@@ -5,9 +5,7 @@ import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
 import clientPromise from "../../../../lib/mongodb";
 
 const callbacks = {
-  session: async (session, sessionToken) => {
-    // console.log("Session:", session);
-    // console.log("sessionToken:", sessionToken);
+  session: async (session) => {
     try {
       const client = await clientPromise;
       if (typeof client.db !== "function") {
