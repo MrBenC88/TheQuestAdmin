@@ -6,15 +6,15 @@ import clientPromise from "../../../../lib/mongodb";
 
 const callbacks = {
   session: async (session, sessionToken) => {
-    console.log("Session:", session);
-    console.log("sessionToken:", sessionToken);
+    // console.log("Session:", session);
+    // console.log("sessionToken:", sessionToken);
     try {
       const client = await clientPromise;
       if (typeof client.db !== "function") {
         console.error("client.db is not a function");
         return Promise.resolve(session);
       }
-      console.log("CHECK!!!!!:" + client);
+      // console.log("CHECK!!!!!:" + client);
 
       const db = client.db("test");
       const userCollection = db.collection("users");
@@ -23,9 +23,14 @@ const callbacks = {
 
       const customFields = {};
 
-      // If the user does not have a role, set the default role
-      if (!session.user.role) {
-        customFields.role = "CHALLENGER";
+      // If the user does not have a accountType, set the default accountType
+      if (!session.user.accountType) {
+        customFields.accountType = "free";
+      }
+
+      // If the user does not have a bio, set the default bio
+      if (!session.user.bio) {
+        customFields.bio = "";
       }
       // TODO: CHECK TO ENSURE USERNAME DOESNT ALREADY EXIST FOR UPDATING USERNAME ROUTE
       // If the user does not have a username, set the default username
@@ -39,7 +44,13 @@ const callbacks = {
         { upsert: true, returnOriginal: false }
       );
 
-      console.log("updatedUser:", updatedUser);
+      // // Update session object with additional fields
+      // session.user.username = updatedUser.value.username;
+      // session.user.userId = updatedUser.value._id.toString();
+      // session.user.accountType = updatedUser.value.accountType;
+      // session.user.bio = updatedUser.value.bio;
+
+      // console.log("updatedUser:", updatedUser);
     } catch (error) {
       console.error("Error updating user details in MongoDB:", error);
     }
