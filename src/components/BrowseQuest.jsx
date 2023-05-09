@@ -152,12 +152,77 @@ const BrowseQuest = () => {
             </VStack>
           );
 
+          const questInnerDetails = (
+            <Box align="left" py={isMobile ? "2%" : "0%"}>
+              <Heading fontSize="lg" py="1%">
+                Tasks:
+              </Heading>
+
+              {q?.questTasks.map((task) => (
+                <Box
+                  boxSize={isMobile ? "85%" : "95%"}
+                  p="0.5%"
+                  m="0.5%"
+                  bgColor="gray.100"
+                  border="1px"
+                  borderRadius="10px"
+                  key={task.taskName}
+                >
+                  <Box justify="flex-start">
+                    <Text
+                      fontSize={isMobile ? "md" : "md"}
+                      textAlign="left"
+                      as="b"
+                      w={isMobile ? "80%" : "100%"}
+                    >
+                      {task.taskName} <br />
+                    </Text>
+                    <Text
+                      fontSize={isMobile ? "md" : "sm"}
+                      textAlign="left"
+                      w={isMobile ? "80%" : "100%"}
+                    >
+                      Detail: {task.taskDescription}
+                    </Text>
+                  </Box>
+                </Box>
+              ))}
+              <Box py={isMobile ? "5%" : "0%"}>
+                <Heading fontSize="lg" pb="0.5%">
+                  Rewards
+                </Heading>
+                <HStack
+                  boxSize={isMobile ? "90%" : "40%"}
+                  justify="space-between"
+                >
+                  <Text textAlign="left" fontSize={"md"}>
+                    Completion
+                    <br /> Failure
+                  </Text>
+                  <Text textAlign="right" fontSize={"md"}>
+                    {q.questIncentive[1]} CP
+                    <br />
+                    {q.questIncentive[0]} CP
+                  </Text>
+                </HStack>{" "}
+                <Text
+                  boxSize={isMobile ? "90%" : "40%"}
+                  fontSize={"md"}
+                  textAlign="left"
+                  pb="0.5%"
+                >
+                  Challenger Points (CP) apply globally to the challenger's
+                  profile.
+                </Text>
+              </Box>
+            </Box>
+          );
           return (
             <Box
               key={q.questName}
               bgColor={q.questColor}
-              py="5%"
-              px="5%"
+              py={isMobile ? "5%" : "1%"}
+              px={"5%"}
               width="100%"
               textColor="black"
               border="1px"
@@ -194,72 +259,15 @@ const BrowseQuest = () => {
                   ? "Tap to expand"
                   : "Click to expand"}
               </Text>
-              {expandedQuest === q.questName && (
-                <Box align="left" py="2%">
-                  <Heading fontSize="lg" py="1%">
-                    Tasks:
-                  </Heading>
-
-                  {q?.questTasks.map((task) => (
-                    <Box
-                      boxSize={isMobile ? "85%" : "95%"}
-                      p="1%"
-                      m="1%"
-                      bgColor="gray.100"
-                      border="1px"
-                      borderRadius="10px"
-                      key={task.taskName}
-                    >
-                      <Box justify="flex-start">
-                        <Text
-                          fontSize={isMobile ? "md" : "md"}
-                          textAlign="left"
-                          w={isMobile ? "80%" : "100%"}
-                        >
-                          {task.taskName} <br />
-                        </Text>
-                        <Text
-                          fontSize={isMobile ? "md" : "md"}
-                          textAlign="left"
-                          w={isMobile ? "80%" : "100%"}
-                        >
-                          Detail: {task.taskDescription}
-                        </Text>
-                      </Box>
-                    </Box>
-                  ))}
-                  <Box py={isMobile ? "5%" : "0%"}>
-                    <Heading fontSize="lg" py="1%">
-                      Rewards
-                    </Heading>
-                    <HStack
-                      boxSize={isMobile ? "90%" : "40%"}
-                      justify="space-between"
-                    >
-                      <Text textAlign="left" fontSize={"lg"}>
-                        Completion
-                        <br /> Failure
-                      </Text>
-                      <Text textAlign="right" fontSize={"lg"}>
-                        {q.questIncentive[1]} CP
-                        <br />
-                        {q.questIncentive[0]} CP
-                      </Text>
-                    </HStack>{" "}
-                    <Text
-                      boxSize={isMobile ? "90%" : "40%"}
-                      fontSize={"md"}
-                      textAlign="left"
-                      py="1%"
-                    >
-                      *Challenger Points (CP) apply globally to the challenger's
-                      profile.
-                    </Text>
-                  </Box>
-                </Box>
-              )}
+              {expandedQuest === q.questName && questInnerDetails}
               {isMobile ? (
-                <VStack py="4%" spacing={1} width="100%" mt="15%" mb="2%">
+                <VStack
+                  py={isMobile ? "1%" : "4%"}
+                  spacing={1}
+                  width="100%"
+                  mt={expandedQuest === q.questName ? "1%" : "15%"}
+                  mb="2%"
+                >
                   <Button
                     colorScheme="yellow"
                     w={isMobile ? "100%" : "auto"}
