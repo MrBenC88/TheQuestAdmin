@@ -13,13 +13,39 @@ import {
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { sampleQuests } from "../constants/questData";
+// import { questData } from "../constants/questData";
 import SearchBar from "./SearchBar";
+import { useSession } from "next-auth/react";
+import { API_BASE_URL } from "../constants/constants";
 
 const UserPanel = () => {
   const [isMobile] = useMediaQuery("(max-width: 767px)");
   const [searchQuery, setSearchQuery] = useState("");
+  const { data: session, status } = useSession();
+  const [questData, setQuestData] = useState([]);
 
+  useEffect(() => {
+    console.log("API_BASE_URL: ", API_BASE_URL);
+    const fetchData = async () => {
+      try {
+        if (!session) {
+          return;
+        }
+        const response = await fetch(
+          `${API_BASE_URL}/userquests?userId=${session?.user?.id}`
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const responseData = await response.json();
+        setQuestData(responseData);
+        console.log(JSON.stringify(responseData));
+      } catch (error) {
+        console.log("Error fetching data: ", error);
+      }
+    };
+    fetchData();
+  }, [session]);
   return (
     <Box
       bgColor="white"
@@ -55,21 +81,29 @@ const UserPanel = () => {
         wrap={useBreakpointValue({ base: "nowrap", lg: "wrap" })}
         justify="space-evenly"
       >
-        {sampleQuests
+        {questData
           .filter((q) => {
             const lowerCaseSearchQuery = searchQuery.toLowerCase();
             return (
-              q.questName.toLowerCase().includes(lowerCaseSearchQuery) ||
-              q.questDescription.toLowerCase().includes(lowerCaseSearchQuery) ||
-              q.questType.toLowerCase().includes(lowerCaseSearchQuery) ||
-              q.questCreator.toLowerCase().includes(lowerCaseSearchQuery) ||
-              q.questStatus.toLowerCase().includes(lowerCaseSearchQuery)
+              q.questId.questName
+                .toLowerCase()
+                .includes(lowerCaseSearchQuery) ||
+              q.questId.questDescription
+                .toLowerCase()
+                .includes(lowerCaseSearchQuery) ||
+              q.questId.questType
+                .toLowerCase()
+                .includes(lowerCaseSearchQuery) ||
+              q.questId.questCreator
+                .toLowerCase()
+                .includes(lowerCaseSearchQuery) ||
+              q.questId.questStatus.toLowerCase().includes(lowerCaseSearchQuery)
             );
           })
           .map((q) => {
-            const backgroundImageStyle = q.questImage
+            const backgroundImageStyle = q.questId.questImage
               ? {
-                  backgroundImage: `url(${q.questImage})`,
+                  backgroundImage: `url(${q.questId.questImage})`,
                   backgroundSize: "cover",
                   backgroundPosition: "50% 30%",
                   opacity: 0.15,
@@ -88,7 +122,7 @@ const UserPanel = () => {
                   fontSize={isMobile ? "md" : "2xl"}
                   transform={isMobile ? "rotate(0deg)" : "rotate(90deg)"}
                 >
-                  {q.questStatus.toUpperCase()}
+                  {q.questId.questStatus.toUpperCase()}
                 </Text>
               </Box>
             );
@@ -107,7 +141,7 @@ const UserPanel = () => {
                   <>
                     <HStack>
                       <Heading color="black" size="lg">
-                        {q.questName}
+                        {q.questId.questName}
                       </Heading>
                     </HStack>
                     <Text
@@ -118,34 +152,34 @@ const UserPanel = () => {
                       top="45%"
                       transform={"rotate(90deg)"}
                     >
-                      {q.questType.toUpperCase()}
+                      {q.questId.questType.toUpperCase()}
                     </Text>
                   </>
                 ) : (
                   <HStack>
                     <Heading color="black" size="lg">
-                      {q.questName}
+                      {q.questId.questName}
                     </Heading>
                     <Text color="black" fontSize="xl">
-                      {q.questType.toUpperCase()}
+                      {q.questId.questType.toUpperCase()}
                     </Text>
                   </HStack>
                 )}
 
                 <Text color="black" fontSize="sm" flexWrap w="95%">
-                  {q.questDescription}
+                  {q.questId.questDescription}
                   <br />
-                  Created by {q.questCreator}
+                  Created by {q.questId.questCreator}
                   <br />
-                  {q.questMembers.length} members | {q.questTasks.length} tasks
+                  {q.questId.questTasks.length} tasks
                 </Text>
               </VStack>
             );
 
             return (
               <Box
-                key={q.questName}
-                bgColor={q.questColor}
+                key={q.questId.questName}
+                bgColor={q.questId.questColor}
                 py="5%"
                 px="5%"
                 width={isMobile ? "100%" : "45%"}
@@ -164,7 +198,7 @@ const UserPanel = () => {
                 transition="0.2s ease"
               >
                 <>
-                  <Link href={`/dashboard/quest/${q.questId}`}>
+                  <Link href={`/dashboard/quest/${q._id}`}>
                     {q.questName}
                     {questDetails}
                     {questStatus}

@@ -9,16 +9,36 @@ import {
   HStack,
   useMediaQuery,
 } from "@chakra-ui/react";
+import { API_BASE_URL } from "../constants/constants";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { sampleQuests } from "../constants/questData";
+// import { questData } from "../constants/questData";
 import SearchBar from "./SearchBar";
 
 const BrowseQuest = () => {
   const [isMobile] = useMediaQuery("(max-width: 767px)");
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedQuest, setExpandedQuest] = useState(null);
+  const [questData, setQuestData] = useState([]);
+
+  useEffect(() => {
+    console.log("API_BASE_URL: ", API_BASE_URL);
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/quests`);
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const responseData = await response.json();
+        setQuestData(responseData.quests);
+        console.log(JSON.stringify(responseData.quests));
+      } catch (error) {
+        console.log("Error fetching data: ", error);
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
     <Box
@@ -56,7 +76,7 @@ const BrowseQuest = () => {
         </HStack>
       )}
 
-      {sampleQuests
+      {questData
         .filter((q) => {
           const lowerCaseSearchQuery = searchQuery.toLowerCase();
           return (
@@ -147,7 +167,7 @@ const BrowseQuest = () => {
                 <br />
                 Created by {q.questCreator}
                 <br />
-                {q.questMembers.length} members | {q.questTasks.length} tasks
+                {q.questTasks.length} tasks
               </Text>
             </VStack>
           );
@@ -200,9 +220,9 @@ const BrowseQuest = () => {
                     <br /> Failure
                   </Text>
                   <Text textAlign="right" fontSize={"md"}>
-                    {q.questIncentive[1]} CP
+                    {q.reward} CP
                     <br />
-                    {q.questIncentive[0]} CP
+                    {q.punishment} CP
                   </Text>
                 </HStack>{" "}
                 <Text
