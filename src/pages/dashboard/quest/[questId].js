@@ -32,11 +32,8 @@ import {
   VStack,
   Heading,
 } from "@chakra-ui/react";
-import { sampleQuests } from "../../../constants/questData";
-
-const getQuestById = (quests, questId) => {
-  return quests.find((quest) => quest.questId === questId);
-};
+import { useSession } from "next-auth/react";
+import { API_BASE_URL } from "../../../constants/constants";
 
 const QuestPage = () => {
   const router = useRouter();
@@ -44,13 +41,37 @@ const QuestPage = () => {
   const [isQuestCompleted, setIsQuestCompleted] = useState(false);
   const [countdown, setCountdown] = useState(null);
   const [expandedRewards, setExpandedRewards] = useState(false);
+  const { data: session, status } = useSession();
+  const [questData, setQuestData] = useState({});
 
   const [isMobile] = useMediaQuery("(max-width: 767px)");
   const { questId } = router.query;
   const [remainingTime, setRemainingTime] = useState(
     moment.tz("America/Los_Angeles").endOf("day").diff(moment(), "seconds")
   );
-  let quest = getQuestById(sampleQuests, questId);
+  // let quest = getQuestById(sampleQuests, questId);
+
+  useEffect(() => {
+    // console.log("API_BASE_URL: ", API_BASE_URL);
+    if (!session) {
+      return;
+    }
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `${API_BASE_URL}/userquest?id=${questId}&userId=${session?.user?.id}`
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const responseData = await response.json();
+        setQuestData(responseData);
+      } catch (error) {
+        console.log("Error fetching data: ", error);
+      }
+    };
+    fetchData();
+  }, [session]);
 
   const handleFinalSubmission = () => {
     if (isQuestCompleted) {
@@ -116,17 +137,14 @@ const QuestPage = () => {
   }, [remainingTime]);
 
   useEffect(() => {
-    if (completedTasks === quest?.questTasks?.length) {
+    if (completedTasks === questData[0]?.questId?.questTasks?.length) {
       setIsQuestCompleted(true);
     }
-  }, [completedTasks, quest]);
+  }, [completedTasks]);
 
-  // fetch the data for the quest with the given quest_id here...
-  //   console.log(sampleQuests, questId);
-
-  const backgroundImageStyle = quest?.questImage
+  const backgroundImageStyle = questData[0]?.questId?.questImage
     ? {
-        backgroundImage: `url(${quest?.questImage})`,
+        backgroundImage: `url(${questData[0].questId?.questImage})`,
         backgroundSize: "cover",
         backgroundPosition: "50% 30%",
         opacity: 0.15,
@@ -145,7 +163,7 @@ const QuestPage = () => {
         fontSize={isMobile ? "md" : "2xl"}
         transform={isMobile ? "rotate(0deg)" : "rotate(90deg)"}
       >
-        {quest?.questStatus?.toUpperCase()}
+        {questData[0]?.questId?.questStatus?.toUpperCase()}
       </Text>
     </Box>
   );
@@ -164,7 +182,7 @@ const QuestPage = () => {
         <>
           <HStack>
             <Heading color="black" size="lg">
-              {quest?.questName}
+              {questData[0]?.questId?.questName}
             </Heading>
           </HStack>
           <Text
@@ -175,27 +193,27 @@ const QuestPage = () => {
             top="45%"
             transform={"rotate(90deg)"}
           >
-            {quest?.questType?.toUpperCase()}
+            {questData[0]?.questId?.questType?.toUpperCase()}
           </Text>
         </>
       ) : (
         <HStack>
           <Heading color="black" size="lg">
-            {quest?.questName}
+            {questData[0]?.questId?.questName}
           </Heading>
           <Text color="black" fontSize="xl">
-            {quest?.questType?.toUpperCase()}
+            {questData[0]?.questId?.questType?.toUpperCase()}
           </Text>
         </HStack>
       )}
 
       <Text color="black" fontSize="sm" flexWrap w="95%">
-        {quest?.questDescription}
+        {questData[0]?.questId?.questDescription}
         <br />
-        Created by {quest?.questCreator}
+        Created by {questData[0]?.questId?.questCreator}
         <br />
-        {quest?.questMembers?.length} members | {quest?.questTasks?.length}{" "}
-        tasks
+        {questData[0]?.questId?.questTasks?.length} tasks | Invite Code:{" "}
+        {questData[0]?.questId?.inviteCode}
       </Text>
     </VStack>
   );
@@ -204,7 +222,7 @@ const QuestPage = () => {
     <Box boxSize="100%" bgColor="orange.50">
       <DashboardHeader />
 
-      {quest ? (
+      {questData[0] ? (
         <Box
           bgColor="white"
           py="0.5%"
@@ -213,10 +231,11 @@ const QuestPage = () => {
           color="black"
         >
           <Heading color="black" size="lg">
-            {quest.questType.toUpperCase()} | Quest ID: {questId}
+            {questData[0]?.questId?.questType.toUpperCase()} | Quest ID:{" "}
+            {questData[0]?.questId?._id}
           </Heading>
           <Box
-            key={quest.questName}
+            key={questData[0]?.questId?.questName}
             bgColor="gray.100"
             py={"2%"}
             px="5%"
@@ -230,7 +249,7 @@ const QuestPage = () => {
             position="relative"
           >
             <>
-              {quest.questName}
+              {questData[0].questId?.questName}
               {questDetails}
               {questStatus}
             </>
@@ -260,9 +279,9 @@ const QuestPage = () => {
                     <br /> Failure
                   </Text>
                   <Text textAlign="right" fontSize={isMobile ? "xl" : "lg"}>
-                    {quest.questIncentive[1]} CP
+                    {questData[0]?.questId?.reward} CP
                     <br />
-                    {quest.questIncentive[0]} CP
+                    {questData[0]?.questId?.punishment} CP
                   </Text>
                 </HStack>{" "}
                 <Text
@@ -278,8 +297,8 @@ const QuestPage = () => {
             )}
 
             <VStack spacing="1" boxSize="100%" pt={isMobile ? "2%" : "3%"}>
-              {quest &&
-                quest.questTasks.map((task) => (
+              {questData[0] &&
+                questData[0]?.questId?.questTasks.map((task) => (
                   <Task
                     key={task.taskName}
                     task={task}

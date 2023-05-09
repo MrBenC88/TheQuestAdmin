@@ -39,7 +39,7 @@ const UserPanel = () => {
         }
         const responseData = await response.json();
         setQuestData(responseData);
-        console.log(JSON.stringify(responseData));
+        // console.log(JSON.stringify(responseData));
       } catch (error) {
         console.log("Error fetching data: ", error);
       }

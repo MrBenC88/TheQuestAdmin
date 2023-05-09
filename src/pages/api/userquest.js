@@ -42,11 +42,15 @@ export default async function handler(req, res) {
   }
 }
 
-// GET by id
+// GET by mongoddb  _id and userid
 // TODO: Add pagination and limit size of resposne for submissionBatch
-// http://localhost:3000/api/userquest?id=6458b4e2414415acbb73cb56
+// http://localhost:3000/api/userquest?id=6458c861df25f0bb588c8e09&userId=64588a88bfde2e54575e099a
 const get = async (req, res) => {
-  const userQuest = await UserQuest.findById(req.query.id);
+  const { id, userId } = req.query;
+  const userQuest = await UserQuest.find({ _id: id, userId: userId })
+    .populate("questId")
+    .exec();
+  // console.log(JSON.stringify(userQuest));
   res.status(200).json(userQuest);
 };
 
