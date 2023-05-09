@@ -43,6 +43,7 @@ const QuestPage = () => {
   const [completedTasks, setCompletedTasks] = useState(0);
   const [isQuestCompleted, setIsQuestCompleted] = useState(false);
   const [countdown, setCountdown] = useState(null);
+  const [expandedRewards, setExpandedRewards] = useState(false);
 
   const [isMobile] = useMediaQuery("(max-width: 767px)");
   const { questId } = router.query;
@@ -59,6 +60,10 @@ const QuestPage = () => {
       // show error message or do something else
       alert("quest failed");
     }
+  };
+
+  const handleExpandRewards = () => {
+    setExpandedRewards(!expandedRewards);
   };
 
   useEffect(() => {
@@ -202,7 +207,7 @@ const QuestPage = () => {
       {quest ? (
         <Box
           bgColor="white"
-          py="1%"
+          py="0.5%"
           px={isMobile ? "3%" : "5%"}
           width="100%"
           color="black"
@@ -213,7 +218,7 @@ const QuestPage = () => {
           <Box
             key={quest.questName}
             bgColor="gray.100"
-            py="5%"
+            py={"2%"}
             px="5%"
             width="100%"
             textColor="black"
@@ -241,34 +246,37 @@ const QuestPage = () => {
               countdown={countdown}
             />
 
-            <Box borderBottom="1px" py={isMobile ? "5%" : "0%"}>
-              <Text fontSize={isMobile ? "xl" : "xl"}>
-                Rewards/Punishments:
-              </Text>{" "}
-              <HStack
-                boxSize={isMobile ? "90%" : "40%"}
-                justify="space-between"
-              >
-                <Text textAlign="left" fontSize={isMobile ? "xl" : "lg"}>
-                  Completion
-                  <br /> Failure
+            <Button colorScheme="linkedin" onClick={handleExpandRewards}>
+              View Rewards
+            </Button>
+            {expandedRewards && (
+              <Box borderBottom="1px" py={isMobile ? "5%" : "0%"}>
+                <HStack
+                  boxSize={isMobile ? "90%" : "40%"}
+                  justify="space-between"
+                >
+                  <Text textAlign="left" fontSize={isMobile ? "xl" : "lg"}>
+                    Completion
+                    <br /> Failure
+                  </Text>
+                  <Text textAlign="right" fontSize={isMobile ? "xl" : "lg"}>
+                    {quest.questIncentive[1]} CP
+                    <br />
+                    {quest.questIncentive[0]} CP
+                  </Text>
+                </HStack>{" "}
+                <Text
+                  boxSize={isMobile ? "90%" : "40%"}
+                  fontSize={isMobile ? "md" : "lg"}
+                  textAlign="left"
+                  py="10px"
+                >
+                  *Challenger Points (CP) apply globally to the challenger's
+                  profile. Read more about CP <b>here</b>.
                 </Text>
-                <Text textAlign="right" fontSize={isMobile ? "xl" : "lg"}>
-                  {quest.questIncentive[1]} CP
-                  <br />
-                  {quest.questIncentive[0]} CP
-                </Text>
-              </HStack>{" "}
-              <Text
-                boxSize={isMobile ? "90%" : "40%"}
-                fontSize={isMobile ? "md" : "lg"}
-                textAlign="left"
-                py="10px"
-              >
-                *Challenger Points (CP) apply globally to the challenger's
-                profile. Read more about CP <b>here</b>.
-              </Text>
-            </Box>
+              </Box>
+            )}
+
             <VStack spacing="1" boxSize="100%" pt={isMobile ? "2%" : "3%"}>
               {quest &&
                 quest.questTasks.map((task) => (

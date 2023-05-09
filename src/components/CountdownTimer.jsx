@@ -35,10 +35,10 @@ const CountdownTimer = ({ remainingTime, countdown }) => {
   return (
     <Box py="1%">
       <Box textAlign="center">
-        <Text fontSize={isMobile ? "2xl" : "xl"} textColor="black">
+        <Text fontSize={"lg"} textColor="black">
           Quest expiring in:
         </Text>
-        <Text fontSize={isMobile ? "5xl" : "6xl"} textColor="black">
+        <Text fontSize={"6xl"} textColor="black">
           {countdown}
         </Text>
       </Box>
