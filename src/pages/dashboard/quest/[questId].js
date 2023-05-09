@@ -68,6 +68,9 @@ const QuestPage = () => {
         setQuestData(responseData);
       } catch (error) {
         console.log("Error fetching data: ", error);
+        // refetch if we fail
+        // wait for 5 seconds before retrying
+        setTimeout(fetchData, 5000);
       }
     };
     fetchData();
