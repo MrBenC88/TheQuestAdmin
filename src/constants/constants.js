@@ -19,3 +19,6 @@ export const JOB_HUNT_GUIDE =
   "https://medium.com/world-of-cultivation/internships-get-the-bread-handbook-11a95f21be89";
 export const NETWORKING_GUIDE =
   "https://medium.com/world-of-cultivation/a-beginners-guide-to-networking-strategies-d7c3de11b47b";
+
+// Life Admin Constants
+export const API_BASE_URL = "http://localhost:3000/";
