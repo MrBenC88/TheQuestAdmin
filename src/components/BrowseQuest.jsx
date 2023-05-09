@@ -15,14 +15,43 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 // import { questData } from "../constants/questData";
 import SearchBar from "./SearchBar";
+import { useSession } from "next-auth/react";
 
 const BrowseQuest = () => {
   const [isMobile] = useMediaQuery("(max-width: 767px)");
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedQuest, setExpandedQuest] = useState(null);
   const [questData, setQuestData] = useState([]);
+  const [userAcceptedQuests, setUserAcceptedQuests] = useState([]);
+  const { data: session, status } = useSession();
 
   useEffect(() => {
+    if (!session) {
+      return;
+    }
+    const fetchAcceptedQuests = async () => {
+      try {
+        const response = await fetch(
+          `${API_BASE_URL}/userquests?userId=${session.user.id}&questList=true`
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const responseData = await response.json();
+
+        setUserAcceptedQuests(responseData);
+      } catch (error) {
+        console.log("Error fetching data: ", error);
+        // refetch if we fail
+        // wait for 5 seconds before retrying
+        setTimeout(fetchAcceptedQuests, 5000);
+      }
+    };
+    fetchAcceptedQuests();
+  }, [session]);
+
+  useEffect(() => {
+    //  Fetch Global Quest Data
     console.log("API_BASE_URL: ", API_BASE_URL);
     const fetchData = async () => {
       try {
@@ -32,9 +61,11 @@ const BrowseQuest = () => {
         }
         const responseData = await response.json();
         setQuestData(responseData.quests);
-        console.log(JSON.stringify(responseData.quests));
+        // console.log(JSON.stringify(responseData.quests));
       } catch (error) {
         console.log("Error fetching data: ", error);
+        // wait for 5 seconds before retrying
+        setTimeout(fetchData, 5000);
       }
     };
     fetchData();
@@ -75,9 +106,14 @@ const BrowseQuest = () => {
           </HStack>
         </HStack>
       )}
-
+      {/* {userAcceptedQuests.toString()} */}
       {questData
         .filter((q) => {
+          // Exclude quests that the user has already accepted found in the userAcceptedQuests array
+          if (userAcceptedQuests.includes(q._id)) {
+            return false;
+          }
+
           const lowerCaseSearchQuery = searchQuery.toLowerCase();
           return (
             q.questName.toLowerCase().includes(lowerCaseSearchQuery) ||
@@ -154,7 +190,7 @@ const BrowseQuest = () => {
               ) : (
                 <HStack>
                   <Heading color="black" size="lg">
-                    {q.questName}
+                    {q.questName}{" "}
                   </Heading>
                   <Text color="black" fontSize="xl">
                     {q.questType.toUpperCase()}
@@ -240,7 +276,9 @@ const BrowseQuest = () => {
           return (
             <Box
               key={q.questName}
-              bgColor={q.questColor}
+              bgColor={
+                userAcceptedQuests.includes(q._id) ? "lightgreen" : q.questColor
+              }
               py={isMobile ? "5%" : "1%"}
               px={"5%"}
               width="100%"
@@ -260,9 +298,12 @@ const BrowseQuest = () => {
               onClick={handleCardClick} // New onClick handler
             >
               {q.questName}
+              {/* Alternative for putting Accepted text for accepted quests */}
+              {/* {userAcceptedQuests.includes(q._id) && (
+                <Text textColor="green.500">Accepted</Text>
+              )} */}
               {questDetails}
               {questPermissions}
-
               <Text
                 position="absolute"
                 bottom="1%"

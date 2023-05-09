@@ -32,19 +32,31 @@ export default async function handler(req, res) {
     }
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" });
-  } finally {
-    await disconnect();
   }
 }
 
 // GET by userId
 // TODO: Add pagination and limit size of resposne for submissionBatch
 // http://localhost:3000/api/userquests?userId=64588a88bfde2e54575e099a
+
+// GET by userId with questList=true
+// This returns the list of questIds for the user's quests. It is unique and it's purpose is to help
+// filter frontend quest lists to only show quests that the user has not already joined.
+// http://localhost:3000/api/userquests?userId=64588a88bfde2e54575e099a&questList=true
 const get = async (req, res) => {
+  const { questList } = req.query;
+
   const userQuests = await UserQuest.find({ userId: req.query.userId })
     .populate("questId") // Add this line to populate the specific quest
     .exec(); // Use exec() to execute the query
-  res.status(200).json(userQuests);
+
+  if (questList === "true") {
+    const questIds = userQuests.map((userQuest) => userQuest.questId._id);
+    const uniqueQuestIds = [...new Set(questIds)];
+    res.status(200).json(uniqueQuestIds);
+  } else {
+    res.status(200).json(userQuests);
+  }
 };
 
 // POST by userId
