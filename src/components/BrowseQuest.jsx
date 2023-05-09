@@ -353,9 +353,7 @@ const BrowseQuest = () => {
                     w={isMobile ? "100%" : "auto"}
                     isDisabled={userAcceptedQuests.includes(q._id)}
                   >
-                    {userAcceptedQuests.includes(q._id)
-                      ? "Accepted"
-                      : "Accept Quest"}
+                    {"Accept Quest"}
                   </Button>
                 </VStack>
               ) : (
@@ -375,9 +373,7 @@ const BrowseQuest = () => {
                     w={isMobile ? "100%" : "auto"}
                     isDisabled={userAcceptedQuests.includes(q._id)}
                   >
-                    {userAcceptedQuests.includes(q._id)
-                      ? "Accepted"
-                      : "Accept Quest"}
+                    {"Accept Quest"}
                   </Button>
                 </HStack>
               )}
