@@ -43,6 +43,7 @@ export default async function handler(req, res) {
 }
 
 // GET by id
+// TODO: Add pagination and limit size of resposne for submissionBatch
 // http://localhost:3000/api/userquest?id=6458b4e2414415acbb73cb56
 const get = async (req, res) => {
   const userQuest = await UserQuest.findById(req.query.id);

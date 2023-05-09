@@ -38,6 +38,7 @@ export default async function handler(req, res) {
 }
 
 // GET by userId
+// TODO: Add pagination and limit size of resposne for submissionBatch
 // http://localhost:3000/api/userquests?userId=64588a88bfde2e54575e099a
 const get = async (req, res) => {
   const userQuests = await UserQuest.find({ userId: req.query.userId })
