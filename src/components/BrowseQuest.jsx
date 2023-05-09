@@ -44,7 +44,7 @@ const BrowseQuest = () => {
         console.log("Error fetching data: ", error);
         // refetch if we fail
         // wait for 5 seconds before retrying
-        setTimeout(fetchAcceptedQuests, 5000);
+        setTimeout(fetchAcceptedQuests, 500);
       }
     };
     fetchAcceptedQuests();
@@ -65,7 +65,7 @@ const BrowseQuest = () => {
       } catch (error) {
         console.log("Error fetching data: ", error);
         // wait for 5 seconds before retrying
-        setTimeout(fetchData, 5000);
+        setTimeout(fetchData, 500);
       }
     };
     fetchData();
@@ -110,9 +110,9 @@ const BrowseQuest = () => {
       {questData
         .filter((q) => {
           // Exclude quests that the user has already accepted found in the userAcceptedQuests array
-          if (userAcceptedQuests.includes(q._id)) {
-            return false;
-          }
+          // if (userAcceptedQuests.includes(q._id)) {
+          //   return false;
+          // }
 
           const lowerCaseSearchQuery = searchQuery.toLowerCase();
           return (
@@ -145,16 +145,32 @@ const BrowseQuest = () => {
           const questPermissions = (
             <Box
               position="absolute"
-              top={isMobile ? "7%" : "auto"}
+              top={
+                isMobile
+                  ? "7%"
+                  : userAcceptedQuests.includes(q._id)
+                  ? "7%"
+                  : "auto"
+              }
               bottom={isMobile ? "auto" : "45%"}
-              right={isMobile ? "3%" : 0}
+              right={
+                isMobile ? "3%" : userAcceptedQuests.includes(q._id) ? "3%" : 0
+              }
             >
               <Text
                 color="black"
                 fontSize={isMobile ? "md" : "2xl"}
-                transform={isMobile ? "rotate(0deg)" : "rotate(90deg)"}
+                transform={
+                  isMobile
+                    ? "rotate(0deg)"
+                    : userAcceptedQuests.includes(q._id)
+                    ? "rotate(0deg)"
+                    : "rotate(90deg)"
+                }
               >
-                {q.questPermissions.toUpperCase()}
+                {userAcceptedQuests.includes(q._id)
+                  ? "On Your List"
+                  : q.questPermissions.toUpperCase()}
               </Text>
             </Box>
           );
@@ -298,10 +314,6 @@ const BrowseQuest = () => {
               onClick={handleCardClick} // New onClick handler
             >
               {q.questName}
-              {/* Alternative for putting Accepted text for accepted quests */}
-              {/* {userAcceptedQuests.includes(q._id) && (
-                <Text textColor="green.500">Accepted</Text>
-              )} */}
               {questDetails}
               {questPermissions}
               <Text
@@ -336,8 +348,14 @@ const BrowseQuest = () => {
                   >
                     {expandedQuest ? "Close Details " : "View Details"}
                   </Button>
-                  <Button colorScheme="blue" w={isMobile ? "100%" : "auto"}>
-                    Accept Quest
+                  <Button
+                    colorScheme="blue"
+                    w={isMobile ? "100%" : "auto"}
+                    isDisabled={userAcceptedQuests.includes(q._id)}
+                  >
+                    {userAcceptedQuests.includes(q._id)
+                      ? "Accepted"
+                      : "Accept Quest"}
                   </Button>
                 </VStack>
               ) : (
@@ -355,8 +373,11 @@ const BrowseQuest = () => {
                     p="2%"
                     ml={!isMobile && "1%"}
                     w={isMobile ? "100%" : "auto"}
+                    isDisabled={userAcceptedQuests.includes(q._id)}
                   >
-                    Accept Quest
+                    {userAcceptedQuests.includes(q._id)
+                      ? "Accepted"
+                      : "Accept Quest"}
                   </Button>
                 </HStack>
               )}
