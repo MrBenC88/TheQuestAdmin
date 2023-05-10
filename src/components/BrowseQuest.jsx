@@ -71,6 +71,27 @@ const BrowseQuest = () => {
     fetchData();
   }, []);
 
+  const handleAcceptQuest = async (questId) => {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/userquests?userId=${session.user.id}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ questId: questId }),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const responseData = await response.json();
+      setUserAcceptedQuests([...userAcceptedQuests, responseData]);
+      setTimeout(fetchAcceptedQuests, 500);
+    } catch (error) {
+      console.error("There was a problem with the fetch operation: ", error);
+    }
+  };
+
   return (
     <Box
       bgColor="white"
@@ -311,7 +332,7 @@ const BrowseQuest = () => {
                 boxShadow: "5px 5px 15px rgba(0,0,0,0.1)",
               }}
               transition="0.2s ease"
-              onClick={handleCardClick} // New onClick handler
+              // onClick={handleCardClick} // New onClick handler
             >
               {q.questName}
               {questDetails}
@@ -352,6 +373,7 @@ const BrowseQuest = () => {
                     colorScheme="blue"
                     w={isMobile ? "100%" : "auto"}
                     isDisabled={userAcceptedQuests.includes(q._id)}
+                    onClick={() => handleAcceptQuest(q._id)}
                   >
                     {"Accept Quest"}
                   </Button>
@@ -372,6 +394,7 @@ const BrowseQuest = () => {
                     ml={!isMobile && "1%"}
                     w={isMobile ? "100%" : "auto"}
                     isDisabled={userAcceptedQuests.includes(q._id)}
+                    onClick={() => handleAcceptQuest(q._id)}
                   >
                     {"Accept Quest"}
                   </Button>
