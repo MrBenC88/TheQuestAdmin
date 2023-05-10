@@ -44,12 +44,38 @@ const QuestPage = () => {
   const { data: session, status } = useSession();
   const [questData, setQuestData] = useState({});
 
+  const [userQuestStatus, setUserQuestStatus] = useState("");
+  const [userQuestPoints, setUserQuestPoints] = useState(0);
+  const [userQuestStreak, setUserQuestStreak] = useState(0);
+
   const [isMobile] = useMediaQuery("(max-width: 767px)");
   const { questId } = router.query;
   const [remainingTime, setRemainingTime] = useState(
     moment.tz("America/Los_Angeles").endOf("day").diff(moment(), "seconds")
   );
-  // let quest = getQuestById(sampleQuests, questId);
+
+  // const fetchUserQuestStatus = async () => {
+  //   if (!session) {
+  //     return;
+  //   }
+  //   try {
+  //     const response = await fetch(
+  //       `${API_BASE_URL}/userquest?id=${questId}&userId=${session?.user?.id}&getStatus=true`
+  //     );
+  //     if (!response.ok) {
+  //       throw new Error("Network response was not ok");
+  //     }
+  //     const responseData = await response.json();
+
+  //     // console.log("responseData: ", JSON.stringify(responseData[0].streak));
+  //     setUserQuestStatus(responseData[0].userQuestStatus);
+  //     setUserQuestPoints(responseData[0].points);
+  //     setUserQuestStreak(responseData[0].streak);
+  //   } catch (error) {
+  //     console.log("Failed to fetch user quest status. Please try again.");
+  //     setTimeout(fetchUserQuestStatus, 5000);
+  //   }
+  // };
 
   useEffect(() => {
     // console.log("API_BASE_URL: ", API_BASE_URL);
@@ -66,6 +92,9 @@ const QuestPage = () => {
         }
         const responseData = await response.json();
         setQuestData(responseData);
+        setUserQuestStatus(responseData[0].userQuestStatus);
+        setUserQuestPoints(responseData[0].points);
+        setUserQuestStreak(responseData[0].streak);
       } catch (error) {
         console.log("Error fetching data: ", error);
         // refetch if we fail
@@ -85,7 +114,11 @@ const QuestPage = () => {
           {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userQuestStatus: "completed" }),
+            body: JSON.stringify({
+              userQuestStatus: "complete",
+              points: userQuestPoints + questData[0]?.questId.reward,
+              streak: userQuestStreak + 1,
+            }),
           }
         );
 
@@ -93,7 +126,10 @@ const QuestPage = () => {
 
         alert("Quest completed!");
       } catch (error) {
-        alert("Failed to complete quest. Please try again.");
+        console.log(
+          "Failed to complete quest. Please try again." + error.response
+        );
+        //setTimeout(handleFinalSubmission, 500);
       }
     } else {
       alert(
@@ -108,7 +144,11 @@ const QuestPage = () => {
       const response = await fetch(`${API_BASE_URL}/userquest?id=${questId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userQuestStatus: "cancelled", streak: 0 }),
+        body: JSON.stringify({
+          userQuestStatus: "cancelled",
+          points: userQuestPoints + questData[0]?.questId.punishment,
+          streak: 0,
+        }),
       });
 
       if (!response.ok) throw new Error("Network response was not ok");
@@ -146,12 +186,6 @@ const QuestPage = () => {
 
     return () => clearInterval(interval);
   }, [remainingTime]);
-
-  const handleTaskSubmit = () => {
-    setIsModalOpen(false);
-    setIsTaskComplete(true);
-    setCompletedTasks((prevCompletedTasks) => prevCompletedTasks + 1);
-  };
 
   useEffect(() => {
     // set interval to update remaining time every second
@@ -244,6 +278,7 @@ const QuestPage = () => {
   useEffect(() => {
     if (completedTasks === questData[0]?.questId?.questTasks?.length) {
       setIsQuestCompleted(true);
+      console.log("Quest completed!");
     }
   }, [completedTasks]);
 
@@ -337,7 +372,7 @@ const QuestPage = () => {
         >
           <Heading color="black" size="lg">
             {questData[0]?.questId?.questType.toUpperCase()} | Quest ID:{" "}
-            {questData[0]?.questId?._id}
+            {questData[0]?.questId?._id} | Streak: {userQuestStreak}
           </Heading>
           <Box
             key={questData[0]?.questId?.questName}

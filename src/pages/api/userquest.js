@@ -42,14 +42,24 @@ export default async function handler(req, res) {
   }
 }
 
-// GET by mongoddb  _id and userid
+// GET by mongoddb  _id and userid with optional getStatus
 // TODO: Add pagination and limit size of resposne for submissionBatch
 // http://localhost:3000/api/userquest?id=6458c861df25f0bb588c8e09&userId=64588a88bfde2e54575e099a
 const get = async (req, res) => {
-  const { id, userId } = req.query;
-  const userQuest = await UserQuest.find({ _id: id, userId: userId })
-    .populate("questId")
-    .exec();
+  const { id, userId, getStatus } = req.query;
+  let userQuest;
+
+  // Return only the status
+  //  http://localhost:3000/api/userquest?id=6458c861df25f0bb588c8e09&userId=64588a88bfde2e54575e099a&getStatus=true
+  if (getStatus === "true") {
+    userQuest = await UserQuest.find({ _id: id, userId: userId })
+      .select("userQuestStatus points streak")
+      .exec();
+  } else {
+    userQuest = await UserQuest.find({ _id: id, userId: userId })
+      .populate("questId")
+      .exec();
+  }
   // console.log(JSON.stringify(userQuest));
   res.status(200).json(userQuest);
 };
