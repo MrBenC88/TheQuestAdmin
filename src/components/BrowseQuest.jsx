@@ -345,15 +345,7 @@ const BrowseQuest = () => {
                 fontSize={isMobile ? "lg" : "xl"}
                 color="black"
                 cursor="pointer"
-              >
-                {expandedQuest === q.questName
-                  ? isMobile
-                    ? "Tap to collapse"
-                    : "Click to collapse"
-                  : isMobile
-                  ? "Tap to expand"
-                  : "Click to expand"}
-              </Text>
+              ></Text>
               {expandedQuest === q.questName && questInnerDetails}
               {isMobile ? (
                 <VStack
@@ -380,7 +372,7 @@ const BrowseQuest = () => {
                   </Button>
                 </VStack>
               ) : (
-                <HStack py="2%" spacing={isMobile ? 4 : 2} width="100%">
+                <HStack pt="2%" spacing={isMobile ? 4 : 2} width="100%">
                   <Button
                     colorScheme="yellow"
                     p="2%"
