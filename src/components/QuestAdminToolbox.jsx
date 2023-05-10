@@ -242,18 +242,18 @@ const QuestAdminToolBox = () => {
                   textColor="black"
                   _placeholder={{ color: "black" }}
                 />
-
-                <FormLabel>Quest Image</FormLabel>
-                <Input
-                  type="text"
-                  name="questImage"
-                  placeholder="Quest Image"
-                  value={formData.questImage}
-                  onChange={handleChange}
-                  textColor="black"
-                  _placeholder={{ color: "black" }}
-                />
-
+              </FormControl>
+              <FormLabel>Quest Image</FormLabel>
+              <Input
+                type="text"
+                name="questImage"
+                placeholder="Quest Image"
+                value={formData.questImage}
+                onChange={handleChange}
+                textColor="black"
+                _placeholder={{ color: "black" }}
+              />
+              <FormControl isRequired textColor="black">
                 <FormLabel as="legend" htmlFor={null}>
                   Select Quest Type
                 </FormLabel>
@@ -330,7 +330,7 @@ const QuestAdminToolBox = () => {
 
               {formData.questTasks.map((task, index) => (
                 <Box key={index} bgColor="lightblue" border="1px" p="1%">
-                  <FormControl>
+                  <FormControl isRequired>
                     <FormLabel>Task Name</FormLabel>
                     <Input
                       type="text"
@@ -339,7 +339,7 @@ const QuestAdminToolBox = () => {
                       onChange={(e) => handleTaskChange(e, index)}
                     />
                   </FormControl>
-                  <FormControl>
+                  <FormControl isRequired>
                     <FormLabel>Task Description</FormLabel>
                     <Input
                       type="text"
@@ -360,7 +360,7 @@ const QuestAdminToolBox = () => {
                       <option value="inprogress">In Progress</option>
                     </Select>
                   </FormControl>
-                  <FormControl>
+                  <FormControl isRequired>
                     <FormLabel>Task Type</FormLabel>
                     <Select
                       name="taskType"
@@ -386,7 +386,7 @@ const QuestAdminToolBox = () => {
                   Remove Task
                 </Button>
               </Box>
-              <FormControl>
+              <FormControl isRequired>
                 <FormLabel>Pick Quest Color</FormLabel>
                 <Input
                   type="text"
@@ -410,6 +410,7 @@ const QuestAdminToolBox = () => {
               <NumberInput>
                 <NumberInputField
                   name="reward"
+                  placeholder="Enter positive value"
                   value={formData.reward}
                   onChange={handleChange}
                 />
@@ -419,21 +420,24 @@ const QuestAdminToolBox = () => {
               <NumberInput>
                 <NumberInputField
                   name="punishment"
+                  placeholder="Enter negative value"
                   value={formData.punishment}
                   onChange={handleChange}
                 />
               </NumberInput>
 
-              <FormLabel>Quest Invite Code</FormLabel>
-              <Input
-                type="text"
-                name="inviteCode"
-                placeholder="Quest Invite Code"
-                value={formData.inviteCode}
-                onChange={handleChange}
-                textColor="black"
-                _placeholder={{ color: "black" }}
-              />
+              <FormControl isRequired>
+                <FormLabel>Quest Invite Code</FormLabel>
+                <Input
+                  type="text"
+                  name="inviteCode"
+                  placeholder="Enter Unique Quest Invite Code"
+                  value={formData.inviteCode}
+                  onChange={handleChange}
+                  textColor="black"
+                  _placeholder={{ color: "black" }}
+                />
+              </FormControl>
             </Box>
 
             <Box py="3%" maxH="80vh" overflowY="auto">
