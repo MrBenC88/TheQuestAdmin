@@ -25,28 +25,29 @@ const BrowseQuest = () => {
   const [userAcceptedQuests, setUserAcceptedQuests] = useState([]);
   const { data: session, status } = useSession();
 
-  useEffect(() => {
+  const fetchAcceptedQuests = async () => {
     if (!session) {
       return;
     }
-    const fetchAcceptedQuests = async () => {
-      try {
-        const response = await fetch(
-          `${API_BASE_URL}/userquests?userId=${session.user.id}&questList=true`
-        );
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const responseData = await response.json();
-
-        setUserAcceptedQuests(responseData);
-      } catch (error) {
-        console.log("Error fetching data: ", error);
-        // refetch if we fail
-        // wait for 5 seconds before retrying
-        setTimeout(fetchAcceptedQuests, 500);
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/userquests?userId=${session.user.id}&questList=true`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
       }
-    };
+      const responseData = await response.json();
+
+      setUserAcceptedQuests(responseData);
+    } catch (error) {
+      console.log("Error fetching data: ", error);
+      // refetch if we fail
+      // wait for 5 seconds before retrying
+      setTimeout(fetchAcceptedQuests, 500);
+    }
+  };
+
+  useEffect(() => {
     fetchAcceptedQuests();
   }, [session]);
 
@@ -86,7 +87,7 @@ const BrowseQuest = () => {
       }
       const responseData = await response.json();
       setUserAcceptedQuests([...userAcceptedQuests, responseData]);
-      setTimeout(fetchAcceptedQuests, 500);
+      fetchAcceptedQuests();
     } catch (error) {
       console.error("There was a problem with the fetch operation: ", error);
     }

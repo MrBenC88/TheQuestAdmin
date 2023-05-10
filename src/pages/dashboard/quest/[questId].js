@@ -76,13 +76,46 @@ const QuestPage = () => {
     fetchData();
   }, [session]);
 
-  const handleFinalSubmission = () => {
+  const handleFinalSubmission = async () => {
     if (isQuestCompleted) {
-      // give user point for completing the quest
-      alert("quest completed");
+      // PUT request to update quest status and award points
+      try {
+        const response = await fetch(
+          `${API_BASE_URL}/userquest?id=${questId}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userQuestStatus: "completed" }),
+          }
+        );
+
+        if (!response.ok) throw new Error("Network response was not ok");
+
+        alert("Quest completed!");
+      } catch (error) {
+        alert("Failed to complete quest. Please try again.");
+      }
     } else {
-      // show error message or do something else
-      alert("quest failed");
+      alert(
+        "Quest is not complete. Please complete all tasks before submitting."
+      );
+    }
+  };
+
+  const handleForfeit = async () => {
+    // PUT request to update quest status and award points
+    try {
+      const response = await fetch(`${API_BASE_URL}/userquest?id=${questId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userQuestStatus: "cancelled", streak: 0 }),
+      });
+
+      if (!response.ok) throw new Error("Network response was not ok");
+
+      alert("Quest cancelled!");
+    } catch (error) {
+      alert("Failed to cancel quest. Please try again.");
     }
   };
 
@@ -130,14 +163,83 @@ const QuestPage = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // useEffect(() => {
+  //   if (remainingTime <= 0) {
+  //     // if remaining time reaches 0, reset to the number of seconds until midnight PST
+  //     setRemainingTime(
+  //       moment.tz("America/Los_Angeles").endOf("day").diff(moment(), "seconds")
+  //     );
+  //   }
+  // }, [remainingTime]);
+
   useEffect(() => {
-    if (remainingTime <= 0) {
-      // if remaining time reaches 0, reset to the number of seconds until midnight PST
-      setRemainingTime(
-        moment.tz("America/Los_Angeles").endOf("day").diff(moment(), "seconds")
-      );
+    let remainingSeconds;
+    switch (questData[0]?.questId?.questType) {
+      case "daily":
+        remainingSeconds = moment
+          .tz("America/Los_Angeles")
+          .endOf("day")
+          .diff(moment(), "seconds");
+        break;
+      case "weekly":
+        remainingSeconds = moment
+          .tz("America/Los_Angeles")
+          .endOf("isoWeek")
+          .diff(moment(), "seconds");
+        break;
+      case "monthly":
+        remainingSeconds = moment
+          .tz("America/Los_Angeles")
+          .endOf("month")
+          .diff(moment(), "seconds");
+        break;
+      case "nodeadline":
+        remainingSeconds = Infinity;
+        break;
+      default:
+        remainingSeconds = moment
+          .tz("America/Los_Angeles")
+          .endOf("day")
+          .diff(moment(), "seconds");
     }
-  }, [remainingTime]);
+    setRemainingTime(remainingSeconds);
+  }, [questData[0]?.questId?.questType]);
+
+  useEffect(() => {
+    if (
+      remainingTime <= 0 &&
+      questData[0]?.questId?.questType !== "nodeadline"
+    ) {
+      // if remaining time reaches 0, reset based on the quest type
+      let remainingSeconds;
+      switch (questData[0]?.questId?.questType) {
+        case "daily":
+          remainingSeconds = moment
+            .tz("America/Los_Angeles")
+            .endOf("day")
+            .diff(moment(), "seconds");
+          break;
+        case "weekly":
+          remainingSeconds = moment
+            .tz("America/Los_Angeles")
+            .endOf("isoWeek")
+            .diff(moment(), "seconds");
+          break;
+        case "monthly":
+          remainingSeconds = moment
+            .tz("America/Los_Angeles")
+            .endOf("month")
+            .diff(moment(), "seconds");
+          break;
+        default:
+          remainingSeconds = moment
+            .tz("America/Los_Angeles")
+            .endOf("day")
+            .diff(moment(), "seconds");
+      }
+      setRemainingTime(remainingSeconds);
+    }
+  }, [remainingTime, questData[0]?.questId?.questType]);
 
   useEffect(() => {
     if (completedTasks === questData[0]?.questId?.questTasks?.length) {
@@ -266,6 +368,7 @@ const QuestPage = () => {
             <CountdownTimer
               remainingTime={remainingTime}
               countdown={countdown}
+              type={questData[0]?.questId?.questType}
             />
 
             <Button colorScheme="linkedin" onClick={handleExpandRewards}>
@@ -322,7 +425,7 @@ const QuestPage = () => {
               </Button>
               <Button
                 colorScheme="red"
-                onClick={handleFinalSubmission}
+                onClick={handleForfeit}
                 px="4%"
                 py={isMobile ? "10%" : "3%"}
                 w={isMobile ? "100%" : "60%"}
