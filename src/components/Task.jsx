@@ -30,7 +30,7 @@ const Task = ({ key, task, setCompletedTasks }) => {
 
   const handleTaskSubmit = () => {
     // handle PUT request to update each task status
-    // also handle proof submission
+    // also handle proof submission [optional upload]
     setIsModalOpen(false);
     setIsTaskComplete(true);
     setCompletedTasks((prevCompletedTasks) => prevCompletedTasks + 1);
