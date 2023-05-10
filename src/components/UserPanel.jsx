@@ -79,6 +79,14 @@ const UserPanel = () => {
         </HStack>
       )}
 
+      {!session && (
+        <Box py="5%">
+          <Text textColor="black">
+            Login to start adding to your quest list!
+          </Text>
+        </Box>
+      )}
+
       <Flex
         direction={{ base: "column", lg: "row" }}
         wrap={useBreakpointValue({ base: "nowrap", lg: "wrap" })}

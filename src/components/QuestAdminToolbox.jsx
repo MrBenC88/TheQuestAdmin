@@ -160,269 +160,289 @@ const QuestAdminToolBox = () => {
 
   return (
     <Box bgColor="white" pt="2%" pb="1%" pl="5%" pr="5%" width="100%">
-      <Heading textColor="black">Quest Admin Toolbox</Heading>
-      <Text textColor="black">
-        A tool to add quests to the global quest list.
-      </Text>
-      {isMobile ? (
-        <VStack align="right" boxW="100%" pt="2%" justify="space-between">
-          <VStack align="left">
-            <Text fontSize="xl" textColor="black" as="b">
-              View Quest Preview
-              <br />
-              UserId: {session && session?.user?.id}
-            </Text>
-            <Text fontSize="md" textColor="black">
-              Modify the fields in the form below and see a preview of the
-              quest. Note that the invite code must be unique and the quest
-              creator id must be a valid user id.
-            </Text>
-          </VStack>
-          <Button colorScheme="green" onClick={handleSubmitQuest}>
-            Submit Quest
-          </Button>
-        </VStack>
+      {!session ? (
+        <Box p="5%">
+          <Text textColor="black">Login to access quest builder tool!</Text>
+        </Box>
       ) : (
-        <HStack align="right" boxW="100%" pt="2%" justify="space-between">
-          <VStack align="left">
-            <Text fontSize="xl" textColor="black" as="b">
-              View Quest Preview | UserId: {session && session?.user?.id}
-            </Text>
-            <Text fontSize="md" textColor="black">
-              Modify the fields in the form below and see a preview of the
-              quest. Note that the invite code must be unique and the quest
-              creator id must be a valid user id.
-            </Text>
-          </VStack>
-          <Button colorScheme="green" onClick={handleSubmitQuest}>
-            Submit Quest
-          </Button>
-        </HStack>
-      )}
+        <Box width="100%">
+          <Heading textColor="black">Quest Admin Toolbox</Heading>
+          <Text textColor="black">
+            A tool to add quests to the global quest list.
+          </Text>
+          {isMobile ? (
+            <VStack align="right" boxW="100%" pt="2%" justify="space-between">
+              <VStack align="left">
+                <Text fontSize="xl" textColor="black" as="b">
+                  View Quest Preview
+                  <br />
+                  UserId: {session && session?.user?.id}
+                </Text>
+                <Text fontSize="md" textColor="black">
+                  Modify the fields in the form below and see a preview of the
+                  quest. Note that the invite code must be unique and the quest
+                  creator id must be a valid user id.
+                </Text>
+              </VStack>
+              <Button colorScheme="green" onClick={handleSubmitQuest}>
+                Submit Quest
+              </Button>
+            </VStack>
+          ) : (
+            <HStack align="right" boxW="100%" pt="2%" justify="space-between">
+              <VStack align="left">
+                <Text fontSize="xl" textColor="black" as="b">
+                  View Quest Preview | UserId: {session && session?.user?.id}
+                </Text>
+                <Text fontSize="md" textColor="black">
+                  Modify the fields in the form below and see a preview of the
+                  quest. Note that the invite code must be unique and the quest
+                  creator id must be a valid user id.
+                </Text>
+              </VStack>
+              <Button colorScheme="green" onClick={handleSubmitQuest}>
+                Submit Quest
+              </Button>
+            </HStack>
+          )}
 
-      <DemoQuestPanel q={formData} />
+          <DemoQuestPanel q={formData} />
 
-      <Grid
-        templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
-        gap={6}
-        color="black"
-      >
-        <Box bgColor="lightgray" py="2%" px="2%" maxH="80vh" overflowY="auto">
-          <FormControl isRequired textColor="black">
-            <FormLabel>Quest Name</FormLabel>
-            <Input
-              type="text"
-              name="questName"
-              placeholder="Quest Name"
-              value={formData.questName}
-              onChange={handleChange}
-              textColor="black"
-              _placeholder={{ color: "black" }}
-            />
-
-            <FormLabel>Quest Description</FormLabel>
-            <Input
-              type="text"
-              name="questDescription"
-              placeholder="Quest Description"
-              value={formData.questDescription}
-              onChange={handleChange}
-              textColor="black"
-              _placeholder={{ color: "black" }}
-            />
-
-            <FormLabel>Quest Image</FormLabel>
-            <Input
-              type="text"
-              name="questImage"
-              placeholder="Quest Image"
-              value={formData.questImage}
-              onChange={handleChange}
-              textColor="black"
-              _placeholder={{ color: "black" }}
-            />
-
-            <FormLabel as="legend" htmlFor={null}>
-              Select Quest Type
-            </FormLabel>
-            <Select
-              variant="outline"
-              placeholder="Select Quest Type"
-              value={formData.questType}
-              onChange={(e) =>
-                setFormData({ ...formData, questType: e.target.value })
-              }
+          <Grid
+            templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
+            gap={6}
+            color="black"
+          >
+            <Box
+              bgColor="lightgray"
+              py="2%"
+              px="2%"
+              maxH="80vh"
+              overflowY="auto"
             >
-              <option value="daily">Daily</option>
-              <option value="weekly">Weekly</option>
-              <option value="monthly">Monthly</option>
-              <option value="oneoff">One off</option>
-              <option value="nodeadline">No Deadline</option>
-            </Select>
-
-            <FormLabel as="legend" htmlFor={null}>
-              Select Quest Status
-            </FormLabel>
-            <Select
-              variant="outline"
-              placeholder="Select Quest Status"
-              value={formData.questStatus}
-              onChange={(e) =>
-                setFormData({ ...formData, questStatus: e.target.value })
-              }
-            >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </Select>
-
-            <FormLabel as="legend" htmlFor={null}>
-              Select Quest Permissions
-            </FormLabel>
-            <Select
-              variant="outline"
-              placeholder="Select Quest Permissions"
-              value={formData.questPermissions}
-              onChange={(e) =>
-                setFormData({ ...formData, questPermissions: e.target.value })
-              }
-            >
-              <option value="public">Public</option>
-              <option value="private">Private</option>
-            </Select>
-
-            <FormLabel>Quest Creator</FormLabel>
-            <Input
-              type="text"
-              name="questCreator"
-              placeholder="Quest Creator"
-              value={formData.questCreator}
-              onChange={handleChange}
-              textColor="black"
-              _placeholder={{ color: "black" }}
-            />
-
-            <FormLabel>Quest Creator Id</FormLabel>
-            <Input
-              type="text"
-              name="questCreatorId"
-              placeholder="Quest Creator Id"
-              value={formData.questCreatorId}
-              onChange={handleChange}
-              textColor="black"
-              _placeholder={{ color: "black" }}
-            />
-          </FormControl>
-
-          {formData.questTasks.map((task, index) => (
-            <Box key={index} bgColor="lightblue">
-              <FormControl>
-                <FormLabel>Task Name</FormLabel>
+              <FormControl isRequired textColor="black">
+                <FormLabel>Quest Name</FormLabel>
                 <Input
                   type="text"
-                  name="taskName"
-                  value={task.taskName}
-                  onChange={(e) => handleTaskChange(e, index)}
+                  name="questName"
+                  placeholder="Quest Name"
+                  value={formData.questName}
+                  onChange={handleChange}
+                  textColor="black"
+                  _placeholder={{ color: "black" }}
                 />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Task Description</FormLabel>
+
+                <FormLabel>Quest Description</FormLabel>
                 <Input
                   type="text"
-                  name="taskDescription"
-                  value={task.taskDescription}
-                  onChange={(e) => handleTaskChange(e, index)}
+                  name="questDescription"
+                  placeholder="Quest Description"
+                  value={formData.questDescription}
+                  onChange={handleChange}
+                  textColor="black"
+                  _placeholder={{ color: "black" }}
                 />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Task Status</FormLabel>
+
+                <FormLabel>Quest Image</FormLabel>
+                <Input
+                  type="text"
+                  name="questImage"
+                  placeholder="Quest Image"
+                  value={formData.questImage}
+                  onChange={handleChange}
+                  textColor="black"
+                  _placeholder={{ color: "black" }}
+                />
+
+                <FormLabel as="legend" htmlFor={null}>
+                  Select Quest Type
+                </FormLabel>
                 <Select
-                  name="taskStatus"
-                  value={task.taskStatus}
-                  onChange={(e) => handleTaskChange(e, index)}
-                >
-                  <option value="complete">Complete</option>
-                  <option value="incomplete">Incomplete</option>
-                  <option value="inprogress">In Progress</option>
-                </Select>
-              </FormControl>
-              <FormControl>
-                <FormLabel>Task Type</FormLabel>
-                <Select
-                  name="taskType"
-                  value={task.taskType}
-                  onChange={(e) => handleTaskChange(e, index)}
+                  variant="outline"
+                  placeholder="Select Quest Type"
+                  value={formData.questType}
+                  onChange={(e) =>
+                    setFormData({ ...formData, questType: e.target.value })
+                  }
                 >
                   <option value="daily">Daily</option>
                   <option value="weekly">Weekly</option>
                   <option value="monthly">Monthly</option>
-                  <option value="annually">Annually</option>
-                  <option value="oneoff">One Off</option>
+                  <option value="oneoff">One off</option>
                   <option value="nodeadline">No Deadline</option>
                 </Select>
+
+                <FormLabel as="legend" htmlFor={null}>
+                  Select Quest Status
+                </FormLabel>
+                <Select
+                  variant="outline"
+                  placeholder="Select Quest Status"
+                  value={formData.questStatus}
+                  onChange={(e) =>
+                    setFormData({ ...formData, questStatus: e.target.value })
+                  }
+                >
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                </Select>
+
+                <FormLabel as="legend" htmlFor={null}>
+                  Select Quest Permissions
+                </FormLabel>
+                <Select
+                  variant="outline"
+                  placeholder="Select Quest Permissions"
+                  value={formData.questPermissions}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      questPermissions: e.target.value,
+                    })
+                  }
+                >
+                  <option value="public">Public</option>
+                  <option value="private">Private</option>
+                </Select>
+
+                <FormLabel>Quest Creator</FormLabel>
+                <Input
+                  type="text"
+                  name="questCreator"
+                  placeholder="Quest Creator"
+                  value={formData.questCreator}
+                  onChange={handleChange}
+                  textColor="black"
+                  _placeholder={{ color: "black" }}
+                />
+
+                <FormLabel>Quest Creator Id</FormLabel>
+                <Input
+                  type="text"
+                  name="questCreatorId"
+                  placeholder="Quest Creator Id"
+                  value={formData.questCreatorId}
+                  onChange={handleChange}
+                  textColor="black"
+                  _placeholder={{ color: "black" }}
+                />
               </FormControl>
+
+              {formData.questTasks.map((task, index) => (
+                <Box key={index} bgColor="lightblue">
+                  <FormControl>
+                    <FormLabel>Task Name</FormLabel>
+                    <Input
+                      type="text"
+                      name="taskName"
+                      value={task.taskName}
+                      onChange={(e) => handleTaskChange(e, index)}
+                    />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>Task Description</FormLabel>
+                    <Input
+                      type="text"
+                      name="taskDescription"
+                      value={task.taskDescription}
+                      onChange={(e) => handleTaskChange(e, index)}
+                    />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>Task Status</FormLabel>
+                    <Select
+                      name="taskStatus"
+                      value={task.taskStatus}
+                      onChange={(e) => handleTaskChange(e, index)}
+                    >
+                      <option value="complete">Complete</option>
+                      <option value="incomplete">Incomplete</option>
+                      <option value="inprogress">In Progress</option>
+                    </Select>
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>Task Type</FormLabel>
+                    <Select
+                      name="taskType"
+                      value={task.taskType}
+                      onChange={(e) => handleTaskChange(e, index)}
+                    >
+                      <option value="daily">Daily</option>
+                      <option value="weekly">Weekly</option>
+                      <option value="monthly">Monthly</option>
+                      <option value="annually">Annually</option>
+                      <option value="oneoff">One Off</option>
+                      <option value="nodeadline">No Deadline</option>
+                    </Select>
+                  </FormControl>
+                </Box>
+              ))}
+
+              <Box align="right" pt="2%">
+                <Button colorScheme="linkedin" onClick={handleAddTask}>
+                  Add Task
+                </Button>
+                <Button colorScheme="red" onClick={handleRemoveTask}>
+                  Remove Task
+                </Button>
+              </Box>
+              <FormControl>
+                <FormLabel>Pick Quest Color</FormLabel>
+                <Input
+                  type="text"
+                  name="questColor"
+                  placeholder="Quest Color"
+                  value={color}
+                  onChange={(e) => {
+                    const newColor = hexToRgb(e.target.value);
+                    if (newColor) {
+                      setColor(newColor);
+                    }
+                  }}
+                />
+              </FormControl>
+              <SketchPicker
+                color={rgbToHex(color)}
+                onChange={handleColorChange}
+              />
+
+              <FormLabel>Reward</FormLabel>
+              <NumberInput>
+                <NumberInputField
+                  name="reward"
+                  value={formData.reward}
+                  onChange={handleChange}
+                />
+              </NumberInput>
+
+              <FormLabel>Punishment</FormLabel>
+              <NumberInput>
+                <NumberInputField
+                  name="punishment"
+                  value={formData.punishment}
+                  onChange={handleChange}
+                />
+              </NumberInput>
+
+              <FormLabel>Quest Invite Code</FormLabel>
+              <Input
+                type="text"
+                name="inviteCode"
+                placeholder="Quest Invite Code"
+                value={formData.inviteCode}
+                onChange={handleChange}
+                textColor="black"
+                _placeholder={{ color: "black" }}
+              />
             </Box>
-          ))}
 
-          <Box align="right" pt="2%">
-            <Button colorScheme="linkedin" onClick={handleAddTask}>
-              Add Task
-            </Button>
-            <Button colorScheme="red" onClick={handleRemoveTask}>
-              Remove Task
-            </Button>
-          </Box>
-          <FormControl>
-            <FormLabel>Pick Quest Color</FormLabel>
-            <Input
-              type="text"
-              name="questColor"
-              placeholder="Quest Color"
-              value={color}
-              onChange={(e) => {
-                const newColor = hexToRgb(e.target.value);
-                if (newColor) {
-                  setColor(newColor);
-                }
-              }}
-            />
-          </FormControl>
-          <SketchPicker color={rgbToHex(color)} onChange={handleColorChange} />
-
-          <FormLabel>Reward</FormLabel>
-          <NumberInput>
-            <NumberInputField
-              name="reward"
-              value={formData.reward}
-              onChange={handleChange}
-            />
-          </NumberInput>
-
-          <FormLabel>Punishment</FormLabel>
-          <NumberInput>
-            <NumberInputField
-              name="punishment"
-              value={formData.punishment}
-              onChange={handleChange}
-            />
-          </NumberInput>
-
-          <FormLabel>Quest Invite Code</FormLabel>
-          <Input
-            type="text"
-            name="inviteCode"
-            placeholder="Quest Invite Code"
-            value={formData.inviteCode}
-            onChange={handleChange}
-            textColor="black"
-            _placeholder={{ color: "black" }}
-          />
+            <Box py="3%" maxH="80vh" overflowY="auto">
+              <Heading py="1%">Quest Submission Preview</Heading>
+              <pre>{JSON.stringify(formData, null, 2)}</pre>
+            </Box>
+          </Grid>
         </Box>
-
-        <Box py="3%" maxH="80vh" overflowY="auto">
-          <Heading py="1%">Quest Submission Preview</Heading>
-          <pre>{JSON.stringify(formData, null, 2)}</pre>
-        </Box>
-      </Grid>
+      )}
     </Box>
   );
 };
