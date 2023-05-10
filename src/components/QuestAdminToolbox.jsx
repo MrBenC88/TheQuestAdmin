@@ -329,7 +329,7 @@ const QuestAdminToolBox = () => {
               </FormControl>
 
               {formData.questTasks.map((task, index) => (
-                <Box key={index} bgColor="lightblue">
+                <Box key={index} bgColor="lightblue" border="1px" p="1%">
                   <FormControl>
                     <FormLabel>Task Name</FormLabel>
                     <Input
