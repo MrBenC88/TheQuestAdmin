@@ -103,6 +103,7 @@ const UserPanel = () => {
               q.questId.questStatus.toLowerCase().includes(lowerCaseSearchQuery)
             );
           })
+          .sort((a, b) => b.streak - a.streak) // Sorts descending order by streak count
           .map((q) => {
             const backgroundImageStyle = q.questId.questImage
               ? {
@@ -168,13 +169,18 @@ const UserPanel = () => {
                     </Text>
                   </HStack>
                 )}
-
                 <Text color="black" fontSize="sm" flexWrap w="95%">
                   {q.questId.questDescription}
                   <br />
                   Created by {q.questId.questCreator}
                   <br />
                   {q.questId.questTasks.length} tasks
+                  <br />
+                </Text>
+                <Text color="black" fontSize="xl">
+                  Streak Count: {q.streak}
+                  <br />
+                  Points: {q.points}
                 </Text>
               </VStack>
             );
