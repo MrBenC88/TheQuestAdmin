@@ -15,6 +15,11 @@
 /* create different components for each quest type: daily, weekly, yearly, one off
       Also ensure to account for different submission types, etc.  */
 
+// TODO: To handle reset of quest after forfeit, submission, or quest expiry we need
+// 1/ Create a serverless function In the /api directory in your Next.js project, create a new file that will serve as your serverless function. For instance, you can name it resetQuest.js
+// 2/ Deploy your application:When you deploy your application to Vercel, your serverless function will be deployed as well. You can access it at a URL like https://your-domain.vercel.app/api/resetQuest.
+// 3/ Set up a cron job: Next, you can set up a cron job that will send a request to your serverless function every 24 hours. If you want to use an external service, you can set up a job on EasyCron or Cron-Job.org that will hit your /api/resetQuest endpoint every 24 hours.
+
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import moment from "moment-timezone";
