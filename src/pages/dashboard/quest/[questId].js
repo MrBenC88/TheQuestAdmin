@@ -372,7 +372,8 @@ const QuestPage = () => {
         >
           <Heading color="black" size="lg">
             {questData[0]?.questId?.questType.toUpperCase()} | Quest ID:{" "}
-            {questData[0]?.questId?._id} | Streak: {userQuestStreak}
+            {questData[0]?.questId?._id} | Streak: {userQuestStreak} | Points{" "}
+            {userQuestPoints} | Status: {userQuestStatus}
           </Heading>
           <Box
             key={questData[0]?.questId?.questName}
@@ -480,7 +481,11 @@ const QuestPage = () => {
           width="100%"
           color="black"
         >
-          <Text textColor="black">Loading Data...</Text>
+          <Text textColor="black">
+            Loading Data...
+            <br />
+            Refresh page if stuck
+          </Text>
         </Box>
       )}
     </Box>
