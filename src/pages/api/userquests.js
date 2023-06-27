@@ -58,10 +58,10 @@ const get = async (req, res) => {
     const uniqueActiveQuestIds = [...new Set(activeQuestIds)];
     res.status(200).json(uniqueActiveQuestIds);
   } else {
-    const activeQuests = userQuests.filter(
-      (userQuest) => userQuest.userQuestStatus !== "cancelled"
-    );
-    res.status(200).json(activeQuests);
+    // const activeQuests = userQuests.filter(
+    //   (userQuest) => userQuest.userQuestStatus !== "cancelled"
+    // );
+    res.status(200).json(userQuests);
   }
 };
 

@@ -95,7 +95,7 @@ const UserPanel = () => {
         {(() => {
           const filteredQuestData = questData
             .filter((q) => {
-              if (q.userQuestStatus !== "inprogress") return false;
+              // if (q.userQuestStatus === "cancelled") return false;
               const lowerCaseSearchQuery = searchQuery.toLowerCase();
               return (
                 q.questId.questName
@@ -150,7 +150,7 @@ const UserPanel = () => {
                   fontSize={isMobile ? "md" : "2xl"}
                   transform={isMobile ? "rotate(0deg)" : "rotate(90deg)"}
                 >
-                  {q.questId.questStatus.toUpperCase()}
+                  {q.userQuestStatus.toUpperCase()}
                 </Text>
               </Box>
             );
@@ -210,34 +210,42 @@ const UserPanel = () => {
             );
 
             return (
-              <Box
-                key={q.questId.questName}
-                bgColor={q.questId.questColor}
-                py="5%"
-                px="5%"
-                width={isMobile ? "100%" : "45%"}
-                textColor="black"
-                border="1px"
-                borderColor="gray.200"
-                borderRadius="lg"
-                boxShadow="lg"
-                my="1%"
-                position="relative"
-                _hover={{
-                  bg: "gray.100",
-                  transform: "scale(1.02)",
-                  boxShadow: "5px 5px 15px rgba(0,0,0,0.1)",
-                }}
-                transition="0.2s ease"
-              >
-                <>
-                  <Link href={`/dashboard/quest/${q._id}`}>
-                    {q.questName}
-                    {questDetails}
-                    {questStatus}
-                  </Link>
-                </>
-              </Box>
+              <>
+                <Box
+                  key={q.questId.questName}
+                  bgColor={
+                    q.userQuestStatus === "complete"
+                      ? "lightgreen"
+                      : q.userQuestStatus === "cancelled"
+                      ? "#ffcccb"
+                      : q.questId.questColor
+                  }
+                  py="5%"
+                  px="5%"
+                  width={isMobile ? "100%" : "45%"}
+                  textColor="black"
+                  border="1px"
+                  borderColor="gray.200"
+                  borderRadius="lg"
+                  boxShadow="lg"
+                  my="1%"
+                  position="relative"
+                  _hover={{
+                    bg: "gray.100",
+                    transform: "scale(1.02)",
+                    boxShadow: "5px 5px 15px rgba(0,0,0,0.1)",
+                  }}
+                  transition="0.2s ease"
+                >
+                  <>
+                    <Link href={`/dashboard/quest/${q._id}`}>
+                      {q.questName}
+                      {questDetails}
+                      {questStatus}
+                    </Link>
+                  </>
+                </Box>
+              </>
             );
           });
         })()}
