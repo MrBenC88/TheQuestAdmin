@@ -51,11 +51,17 @@ const get = async (req, res) => {
     .exec(); // Use exec() to execute the query
 
   if (questList === "true") {
-    const questIds = userQuests.map((userQuest) => userQuest.questId._id);
-    const uniqueQuestIds = [...new Set(questIds)];
-    res.status(200).json(uniqueQuestIds);
+    const activeQuestIds = userQuests
+      .filter((userQuest) => userQuest.userQuestStatus !== "cancelled")
+      .map((userQuest) => userQuest.questId._id);
+
+    const uniqueActiveQuestIds = [...new Set(activeQuestIds)];
+    res.status(200).json(uniqueActiveQuestIds);
   } else {
-    res.status(200).json(userQuests);
+    const activeQuests = userQuests.filter(
+      (userQuest) => userQuest.userQuestStatus !== "cancelled"
+    );
+    res.status(200).json(activeQuests);
   }
 };
 

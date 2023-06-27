@@ -19,7 +19,6 @@ const proofSchema = new mongoose.Schema(
 const taskSubmissionSchema = new mongoose.Schema({
   taskId: { type: mongoose.Schema.Types.ObjectId, ref: "Task" },
   completed: { type: Boolean, default: false },
-  proof: proofSchema,
   updatedAt: { type: Date, default: Date.now },
 });
 
@@ -35,6 +34,7 @@ const submissionBatchSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, required: true },
   taskSubmissions: [taskSubmissionSchema],
+  proof: [proofSchema],
 });
 
 // Upon clicking into a quest from their userquest list

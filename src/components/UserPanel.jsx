@@ -94,7 +94,7 @@ const UserPanel = () => {
       >
         {questData
           .filter((q) => {
-            if (q.userQuestStatus === "cancelled") return false;
+            if (q.userQuestStatus !== "inprogress") return false;
             const lowerCaseSearchQuery = searchQuery.toLowerCase();
             return (
               q.questId.questName

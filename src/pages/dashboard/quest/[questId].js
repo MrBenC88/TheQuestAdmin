@@ -100,6 +100,25 @@ const QuestPage = () => {
         setUserQuestStatus(responseData[0].userQuestStatus);
         setUserQuestPoints(responseData[0].points);
         setUserQuestStreak(responseData[0].streak);
+        // Check if the quest has expired and update status if necessary
+        if (moment().isAfter(moment(responseData[0].expiry))) {
+          // Quest expired, update status to "inprogress"
+          const updateResponse = await fetch(
+            `${API_BASE_URL}/userquest?id=${questId}`,
+            {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                userQuestStatus: "inprogress",
+              }),
+            }
+          );
+
+          if (!updateResponse.ok)
+            throw new Error("Network response was not ok");
+
+          setUserQuestStatus("inprogress"); // Update local state to reflect new status
+        }
       } catch (error) {
         console.log("Error fetching data: ", error);
         // refetch if we fail
