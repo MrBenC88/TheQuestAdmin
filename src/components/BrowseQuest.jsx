@@ -9,16 +9,89 @@ import {
   HStack,
   useMediaQuery,
 } from "@chakra-ui/react";
+import { API_BASE_URL } from "../constants/constants";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { sampleQuests } from "../constants/questData";
+// import { questData } from "../constants/questData";
 import SearchBar from "./SearchBar";
+import { useSession } from "next-auth/react";
 
 const BrowseQuest = () => {
   const [isMobile] = useMediaQuery("(max-width: 767px)");
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedQuest, setExpandedQuest] = useState(null);
+  const [questData, setQuestData] = useState([]);
+  const [userAcceptedQuests, setUserAcceptedQuests] = useState([]);
+  const { data: session, status } = useSession();
+
+  const fetchAcceptedQuests = async () => {
+    if (!session) {
+      return;
+    }
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/userquests?userId=${session.user.id}&questList=true`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const responseData = await response.json();
+
+      setUserAcceptedQuests(responseData);
+    } catch (error) {
+      console.log("Error fetching data: ", error);
+      // refetch if we fail
+      // wait for 5 seconds before retrying
+      setTimeout(fetchAcceptedQuests, 500);
+    }
+  };
+
+  useEffect(() => {
+    fetchAcceptedQuests();
+  }, [session]);
+
+  useEffect(() => {
+    //  Fetch Global Quest Data
+    console.log("API_BASE_URL: ", API_BASE_URL);
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/quests`);
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const responseData = await response.json();
+        setQuestData(responseData.quests);
+        // console.log(JSON.stringify(responseData.quests));
+      } catch (error) {
+        console.log("Error fetching data: ", error);
+        // wait for 5 seconds before retrying
+        setTimeout(fetchData, 500);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const handleAcceptQuest = async (questId) => {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/userquests?userId=${session.user.id}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ questId: questId }),
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const responseData = await response.json();
+      setUserAcceptedQuests([...userAcceptedQuests, responseData]);
+      fetchAcceptedQuests();
+    } catch (error) {
+      console.error("There was a problem with the fetch operation: ", error);
+    }
+  };
 
   return (
     <Box
@@ -55,9 +128,14 @@ const BrowseQuest = () => {
           </HStack>
         </HStack>
       )}
-
-      {sampleQuests
+      {/* {userAcceptedQuests.toString()} */}
+      {questData
         .filter((q) => {
+          // Exclude quests that the user has already accepted found in the userAcceptedQuests array
+          // if (userAcceptedQuests.includes(q._id)) {
+          //   return false;
+          // }
+
           const lowerCaseSearchQuery = searchQuery.toLowerCase();
           return (
             q.questName.toLowerCase().includes(lowerCaseSearchQuery) ||
@@ -89,16 +167,32 @@ const BrowseQuest = () => {
           const questPermissions = (
             <Box
               position="absolute"
-              top={isMobile ? "7%" : "auto"}
+              top={
+                isMobile
+                  ? "7%"
+                  : userAcceptedQuests.includes(q._id)
+                  ? "7%"
+                  : "auto"
+              }
               bottom={isMobile ? "auto" : "45%"}
-              right={isMobile ? "3%" : 0}
+              right={
+                isMobile ? "3%" : userAcceptedQuests.includes(q._id) ? "3%" : 0
+              }
             >
               <Text
                 color="black"
                 fontSize={isMobile ? "md" : "2xl"}
-                transform={isMobile ? "rotate(0deg)" : "rotate(90deg)"}
+                transform={
+                  isMobile
+                    ? "rotate(0deg)"
+                    : userAcceptedQuests.includes(q._id)
+                    ? "rotate(0deg)"
+                    : "rotate(90deg)"
+                }
               >
-                {q.questPermissions.toUpperCase()}
+                {userAcceptedQuests.includes(q._id)
+                  ? "On Your List"
+                  : q.questPermissions.toUpperCase()}
               </Text>
             </Box>
           );
@@ -134,7 +228,7 @@ const BrowseQuest = () => {
               ) : (
                 <HStack>
                   <Heading color="black" size="lg">
-                    {q.questName}
+                    {q.questName}{" "}
                   </Heading>
                   <Text color="black" fontSize="xl">
                     {q.questType.toUpperCase()}
@@ -147,17 +241,84 @@ const BrowseQuest = () => {
                 <br />
                 Created by {q.questCreator}
                 <br />
-                {q.questMembers.length} members | {q.questTasks.length} tasks
+                {q.questTasks.length} tasks
               </Text>
             </VStack>
           );
 
+          const questInnerDetails = (
+            <Box align="left" py={isMobile ? "2%" : "0%"}>
+              <Heading fontSize="lg" py="1%">
+                Tasks:
+              </Heading>
+
+              {q?.questTasks.map((task) => (
+                <Box
+                  boxSize={isMobile ? "85%" : "95%"}
+                  p="0.5%"
+                  m="0.5%"
+                  bgColor="gray.100"
+                  border="1px"
+                  borderRadius="10px"
+                  key={task.taskName}
+                >
+                  <Box justify="flex-start">
+                    <Text
+                      fontSize={isMobile ? "md" : "md"}
+                      textAlign="left"
+                      as="b"
+                      w={isMobile ? "80%" : "100%"}
+                    >
+                      {task.taskName} <br />
+                    </Text>
+                    <Text
+                      fontSize={isMobile ? "md" : "sm"}
+                      textAlign="left"
+                      w={isMobile ? "80%" : "100%"}
+                    >
+                      Detail: {task.taskDescription}
+                    </Text>
+                  </Box>
+                </Box>
+              ))}
+              <Box py={isMobile ? "5%" : "0%"}>
+                <Heading fontSize="lg" pb="0.5%">
+                  Rewards
+                </Heading>
+                <HStack
+                  boxSize={isMobile ? "90%" : "40%"}
+                  justify="space-between"
+                >
+                  <Text textAlign="left" fontSize={"md"}>
+                    Completion
+                    <br /> Failure
+                  </Text>
+                  <Text textAlign="right" fontSize={"md"}>
+                    {q.reward} CP
+                    <br />
+                    {q.punishment} CP
+                  </Text>
+                </HStack>{" "}
+                <Text
+                  boxSize={isMobile ? "90%" : "40%"}
+                  fontSize={"md"}
+                  textAlign="left"
+                  pb="0.5%"
+                >
+                  Challenger Points (CP) apply globally to the challenger's
+                  profile.
+                </Text>
+              </Box>
+            </Box>
+          );
           return (
             <Box
               key={q.questName}
-              bgColor={q.questColor}
-              py="5%"
-              px="5%"
+              bgColor={
+                userAcceptedQuests.includes(q._id) ? "lightgreen" : q.questColor
+              }
+              py={isMobile ? "5%" : "1%"}
+              px={"5%"}
               width="100%"
               textColor="black"
               border="1px"
@@ -172,12 +333,11 @@ const BrowseQuest = () => {
                 boxShadow: "5px 5px 15px rgba(0,0,0,0.1)",
               }}
               transition="0.2s ease"
-              onClick={handleCardClick} // New onClick handler
+              // onClick={handleCardClick} // New onClick handler
             >
               {q.questName}
               {questDetails}
               {questPermissions}
-
               <Text
                 position="absolute"
                 bottom="1%"
@@ -185,81 +345,16 @@ const BrowseQuest = () => {
                 fontSize={isMobile ? "lg" : "xl"}
                 color="black"
                 cursor="pointer"
-              >
-                {expandedQuest === q.questName
-                  ? isMobile
-                    ? "Tap to collapse"
-                    : "Click to collapse"
-                  : isMobile
-                  ? "Tap to expand"
-                  : "Click to expand"}
-              </Text>
-              {expandedQuest === q.questName && (
-                <Box align="left" py="2%">
-                  <Heading fontSize="lg" py="1%">
-                    Tasks:
-                  </Heading>
-
-                  {q?.questTasks.map((task) => (
-                    <Box
-                      boxSize={isMobile ? "85%" : "95%"}
-                      p="1%"
-                      m="1%"
-                      bgColor="gray.100"
-                      border="1px"
-                      borderRadius="10px"
-                      key={task.taskName}
-                    >
-                      <Box justify="flex-start">
-                        <Text
-                          fontSize={isMobile ? "md" : "md"}
-                          textAlign="left"
-                          w={isMobile ? "80%" : "100%"}
-                        >
-                          {task.taskName} <br />
-                        </Text>
-                        <Text
-                          fontSize={isMobile ? "md" : "md"}
-                          textAlign="left"
-                          w={isMobile ? "80%" : "100%"}
-                        >
-                          Detail: {task.taskDescription}
-                        </Text>
-                      </Box>
-                    </Box>
-                  ))}
-                  <Box py={isMobile ? "5%" : "0%"}>
-                    <Heading fontSize="lg" py="1%">
-                      Rewards
-                    </Heading>
-                    <HStack
-                      boxSize={isMobile ? "90%" : "40%"}
-                      justify="space-between"
-                    >
-                      <Text textAlign="left" fontSize={"lg"}>
-                        Completion
-                        <br /> Failure
-                      </Text>
-                      <Text textAlign="right" fontSize={"lg"}>
-                        {q.questIncentive[1]} CP
-                        <br />
-                        {q.questIncentive[0]} CP
-                      </Text>
-                    </HStack>{" "}
-                    <Text
-                      boxSize={isMobile ? "90%" : "40%"}
-                      fontSize={"md"}
-                      textAlign="left"
-                      py="1%"
-                    >
-                      *Challenger Points (CP) apply globally to the challenger's
-                      profile.
-                    </Text>
-                  </Box>
-                </Box>
-              )}
+              ></Text>
+              {expandedQuest === q.questName && questInnerDetails}
               {isMobile ? (
-                <VStack py="4%" spacing={1} width="100%" mt="15%" mb="2%">
+                <VStack
+                  py={isMobile ? "1%" : "4%"}
+                  spacing={1}
+                  width="100%"
+                  mt={expandedQuest === q.questName ? "1%" : "15%"}
+                  mb="2%"
+                >
                   <Button
                     colorScheme="yellow"
                     w={isMobile ? "100%" : "auto"}
@@ -267,12 +362,17 @@ const BrowseQuest = () => {
                   >
                     {expandedQuest ? "Close Details " : "View Details"}
                   </Button>
-                  <Button colorScheme="blue" w={isMobile ? "100%" : "auto"}>
-                    Accept Quest
+                  <Button
+                    colorScheme="blue"
+                    w={isMobile ? "100%" : "auto"}
+                    isDisabled={userAcceptedQuests.includes(q._id)}
+                    onClick={() => handleAcceptQuest(q._id)}
+                  >
+                    {"Accept Quest"}
                   </Button>
                 </VStack>
               ) : (
-                <HStack py="2%" spacing={isMobile ? 4 : 2} width="100%">
+                <HStack pt="2%" spacing={isMobile ? 4 : 2} width="100%">
                   <Button
                     colorScheme="yellow"
                     p="2%"
@@ -286,8 +386,10 @@ const BrowseQuest = () => {
                     p="2%"
                     ml={!isMobile && "1%"}
                     w={isMobile ? "100%" : "auto"}
+                    isDisabled={userAcceptedQuests.includes(q._id)}
+                    onClick={() => handleAcceptQuest(q._id)}
                   >
-                    Accept Quest
+                    {"Accept Quest"}
                   </Button>
                 </HStack>
               )}

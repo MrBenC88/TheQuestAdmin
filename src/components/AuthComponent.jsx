@@ -2,8 +2,8 @@ import { signIn, signOut, useSession } from "next-auth/react";
 
 const AuthComponent = () => {
   const { data: session, status } = useSession();
-  console.log(session);
-  console.log(session?.user?.email);
+  // console.log(session);
+  // console.log(session?.user?.email);
 
   return (
     <div>

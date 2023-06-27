@@ -19,3 +19,16 @@ export const JOB_HUNT_GUIDE =
   "https://medium.com/world-of-cultivation/internships-get-the-bread-handbook-11a95f21be89";
 export const NETWORKING_GUIDE =
   "https://medium.com/world-of-cultivation/a-beginners-guide-to-networking-strategies-d7c3de11b47b";
+
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+// Life Admin Constants
+export const API_BASE_URL = "http://localhost:3000/api";
+
+// Quest Duration Constants
+export const QUEST_DURATIONS = {
+  daily: 86400, // 24 hours
+  weekly: 604800, // 7 days
+  monthly: 2592000, // Assume 30 days
+  nodeadline: Infinity,
+};

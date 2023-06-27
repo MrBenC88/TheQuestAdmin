@@ -102,9 +102,7 @@ const DashboardHeader = () => {
           </Button>
           <Flex alignItems="left" p="10px">
             <Heading as="h1" size={"md"} color="black">
-              {session
-                ? `Life Admin | Welcome ${session.user.name}`
-                : "Life Admin | Welcome Challenger"}
+              {session ? `Welcome ${session.user.name}` : "Welcome Challenger"}
             </Heading>
           </Flex>
         </HStack>

@@ -15,6 +15,11 @@
 /* create different components for each quest type: daily, weekly, yearly, one off
       Also ensure to account for different submission types, etc.  */
 
+// TODO: To handle reset of quest after forfeit, submission, or quest expiry we need
+// 1/ Create a serverless function In the /api directory in your Next.js project, create a new file that will serve as your serverless function. For instance, you can name it resetQuest.js
+// 2/ Deploy your application:When you deploy your application to Vercel, your serverless function will be deployed as well. You can access it at a URL like https://your-domain.vercel.app/api/resetQuest.
+// 3/ Set up a cron job: Next, you can set up a cron job that will send a request to your serverless function every 24 hours. If you want to use an external service, you can set up a job on EasyCron or Cron-Job.org that will hit your /api/resetQuest endpoint every 24 hours.
+
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import moment from "moment-timezone";
@@ -32,33 +37,154 @@ import {
   VStack,
   Heading,
 } from "@chakra-ui/react";
-import { sampleQuests } from "../../../constants/questData";
-
-const getQuestById = (quests, questId) => {
-  return quests.find((quest) => quest.questId === questId);
-};
+import { useSession } from "next-auth/react";
+import { API_BASE_URL } from "../../../constants/constants";
 
 const QuestPage = () => {
   const router = useRouter();
   const [completedTasks, setCompletedTasks] = useState(0);
   const [isQuestCompleted, setIsQuestCompleted] = useState(false);
   const [countdown, setCountdown] = useState(null);
+  const [expandedRewards, setExpandedRewards] = useState(false);
+  const { data: session, status } = useSession();
+  const [questData, setQuestData] = useState({});
+
+  const [userQuestStatus, setUserQuestStatus] = useState("");
+  const [userQuestPoints, setUserQuestPoints] = useState(0);
+  const [userQuestStreak, setUserQuestStreak] = useState(0);
 
   const [isMobile] = useMediaQuery("(max-width: 767px)");
   const { questId } = router.query;
   const [remainingTime, setRemainingTime] = useState(
     moment.tz("America/Los_Angeles").endOf("day").diff(moment(), "seconds")
   );
-  let quest = getQuestById(sampleQuests, questId);
 
-  const handleFinalSubmission = () => {
-    if (isQuestCompleted) {
-      // give user point for completing the quest
-      alert("quest completed");
-    } else {
-      // show error message or do something else
-      alert("quest failed");
+  // const fetchUserQuestStatus = async () => {
+  //   if (!session) {
+  //     return;
+  //   }
+  //   try {
+  //     const response = await fetch(
+  //       `${API_BASE_URL}/userquest?id=${questId}&userId=${session?.user?.id}&getStatus=true`
+  //     );
+  //     if (!response.ok) {
+  //       throw new Error("Network response was not ok");
+  //     }
+  //     const responseData = await response.json();
+
+  //     // console.log("responseData: ", JSON.stringify(responseData[0].streak));
+  //     setUserQuestStatus(responseData[0].userQuestStatus);
+  //     setUserQuestPoints(responseData[0].points);
+  //     setUserQuestStreak(responseData[0].streak);
+  //   } catch (error) {
+  //     console.log("Failed to fetch user quest status. Please try again.");
+  //     setTimeout(fetchUserQuestStatus, 5000);
+  //   }
+  // };
+
+  useEffect(() => {
+    // console.log("API_BASE_URL: ", API_BASE_URL);
+    if (!session) {
+      return;
     }
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `${API_BASE_URL}/userquest?id=${questId}&userId=${session?.user?.id}`
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const responseData = await response.json();
+        setQuestData(responseData);
+        setUserQuestStatus(responseData[0].userQuestStatus);
+        setUserQuestPoints(responseData[0].points);
+        setUserQuestStreak(responseData[0].streak);
+        // Check if the quest has expired and update status if necessary
+        if (moment().isAfter(moment(responseData[0].expiry))) {
+          // Quest expired, update status to "inprogress"
+          const updateResponse = await fetch(
+            `${API_BASE_URL}/userquest?id=${questId}`,
+            {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                userQuestStatus: "inprogress",
+              }),
+            }
+          );
+
+          if (!updateResponse.ok)
+            throw new Error("Network response was not ok");
+
+          setUserQuestStatus("inprogress"); // Update local state to reflect new status
+        }
+      } catch (error) {
+        console.log("Error fetching data: ", error);
+        // refetch if we fail
+        // wait for 5 seconds before retrying
+        setTimeout(fetchData, 5000);
+      }
+    };
+    fetchData();
+  }, [session]);
+
+  const handleFinalSubmission = async () => {
+    if (isQuestCompleted) {
+      // PUT request to update quest status and award points
+      try {
+        const response = await fetch(
+          `${API_BASE_URL}/userquest?id=${questId}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userQuestStatus: "complete",
+              points: userQuestPoints + questData[0]?.questId.reward,
+              streak: userQuestStreak + 1,
+            }),
+          }
+        );
+
+        if (!response.ok) throw new Error("Network response was not ok");
+
+        alert("Quest completed!");
+      } catch (error) {
+        console.log(
+          "Failed to complete quest. Please try again." + error.response
+        );
+        //setTimeout(handleFinalSubmission, 500);
+      }
+    } else {
+      alert(
+        "Quest is not complete. Please complete all tasks before submitting."
+      );
+    }
+  };
+
+  const handleForfeit = async () => {
+    // PUT request to update quest status and award points
+    try {
+      const response = await fetch(`${API_BASE_URL}/userquest?id=${questId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userQuestStatus: "cancelled",
+          points: userQuestPoints + questData[0]?.questId.punishment,
+          streak: 0,
+        }),
+      });
+
+      if (!response.ok) throw new Error("Network response was not ok");
+
+      alert("Quest cancelled!");
+    } catch (error) {
+      alert("Failed to cancel quest. Please try again.");
+    }
+  };
+
+  const handleExpandRewards = () => {
+    setExpandedRewards(!expandedRewards);
   };
 
   useEffect(() => {
@@ -85,12 +211,6 @@ const QuestPage = () => {
     return () => clearInterval(interval);
   }, [remainingTime]);
 
-  const handleTaskSubmit = () => {
-    setIsModalOpen(false);
-    setIsTaskComplete(true);
-    setCompletedTasks((prevCompletedTasks) => prevCompletedTasks + 1);
-  };
-
   useEffect(() => {
     // set interval to update remaining time every second
     const interval = setInterval(() => {
@@ -101,27 +221,97 @@ const QuestPage = () => {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    if (remainingTime <= 0) {
-      // if remaining time reaches 0, reset to the number of seconds until midnight PST
-      setRemainingTime(
-        moment.tz("America/Los_Angeles").endOf("day").diff(moment(), "seconds")
-      );
-    }
-  }, [remainingTime]);
+  // useEffect(() => {
+  //   if (remainingTime <= 0) {
+  //     // if remaining time reaches 0, reset to the number of seconds until midnight PST
+  //     setRemainingTime(
+  //       moment.tz("America/Los_Angeles").endOf("day").diff(moment(), "seconds")
+  //     );
+  //   }
+  // }, [remainingTime]);
 
   useEffect(() => {
-    if (completedTasks === quest?.questTasks?.length) {
+    let remainingSeconds;
+    switch (questData[0]?.questId?.questType) {
+      case "daily":
+        remainingSeconds = moment
+          .tz("America/Los_Angeles")
+          .endOf("day")
+          .diff(moment(), "seconds");
+        break;
+      case "weekly":
+        remainingSeconds = moment
+          .tz("America/Los_Angeles")
+          .endOf("isoWeek")
+          .diff(moment(), "seconds");
+        break;
+      case "monthly":
+        remainingSeconds = moment
+          .tz("America/Los_Angeles")
+          .endOf("month")
+          .diff(moment(), "seconds");
+        break;
+      case "nodeadline":
+        remainingSeconds = Infinity;
+        break;
+      default:
+        remainingSeconds = moment
+          .tz("America/Los_Angeles")
+          .endOf("day")
+          .diff(moment(), "seconds");
+    }
+    setRemainingTime(remainingSeconds);
+  }, [questData[0]?.questId?.questType]);
+
+  useEffect(() => {
+    if (
+      remainingTime <= 0 &&
+      questData[0]?.questId?.questType !== "nodeadline"
+    ) {
+      // if remaining time reaches 0, reset based on the quest type
+      let remainingSeconds;
+      switch (questData[0]?.questId?.questType) {
+        case "daily":
+          remainingSeconds = moment
+            .tz("America/Los_Angeles")
+            .endOf("day")
+            .diff(moment(), "seconds");
+          break;
+        case "weekly":
+          remainingSeconds = moment
+            .tz("America/Los_Angeles")
+            .endOf("isoWeek")
+            .diff(moment(), "seconds");
+          break;
+        case "monthly":
+          remainingSeconds = moment
+            .tz("America/Los_Angeles")
+            .endOf("month")
+            .diff(moment(), "seconds");
+          break;
+        default:
+          remainingSeconds = moment
+            .tz("America/Los_Angeles")
+            .endOf("day")
+            .diff(moment(), "seconds");
+      }
+      setRemainingTime(remainingSeconds);
+    }
+  }, [remainingTime, questData[0]?.questId?.questType]);
+
+  useEffect(() => {
+    if (completedTasks === questData[0]?.questId?.questTasks?.length) {
       setIsQuestCompleted(true);
+      console.log("Quest completed!");
+    } else if (completedTasks < questData[0]?.questId?.questTasks?.length) {
+      setIsQuestCompleted(false);
+      console.log("Quest not completed!");
     }
-  }, [completedTasks, quest]);
+  }, [completedTasks]);
 
-  // fetch the data for the quest with the given quest_id here...
-  //   console.log(sampleQuests, questId);
-
-  const backgroundImageStyle = quest?.questImage
+  const backgroundImageStyle = questData[0]?.questId?.questImage
     ? {
-        backgroundImage: `url(${quest?.questImage})`,
+        backgroundImage: `url(${questData[0].questId?.questImage})`,
         backgroundSize: "cover",
         backgroundPosition: "50% 30%",
         opacity: 0.15,
@@ -140,7 +330,7 @@ const QuestPage = () => {
         fontSize={isMobile ? "md" : "2xl"}
         transform={isMobile ? "rotate(0deg)" : "rotate(90deg)"}
       >
-        {quest?.questStatus?.toUpperCase()}
+        {questData[0]?.questId?.questStatus?.toUpperCase()}
       </Text>
     </Box>
   );
@@ -159,7 +349,7 @@ const QuestPage = () => {
         <>
           <HStack>
             <Heading color="black" size="lg">
-              {quest?.questName}
+              {questData[0]?.questId?.questName}
             </Heading>
           </HStack>
           <Text
@@ -170,27 +360,27 @@ const QuestPage = () => {
             top="45%"
             transform={"rotate(90deg)"}
           >
-            {quest?.questType?.toUpperCase()}
+            {questData[0]?.questId?.questType?.toUpperCase()}
           </Text>
         </>
       ) : (
         <HStack>
           <Heading color="black" size="lg">
-            {quest?.questName}
+            {questData[0]?.questId?.questName}
           </Heading>
           <Text color="black" fontSize="xl">
-            {quest?.questType?.toUpperCase()}
+            {questData[0]?.questId?.questType?.toUpperCase()}
           </Text>
         </HStack>
       )}
 
       <Text color="black" fontSize="sm" flexWrap w="95%">
-        {quest?.questDescription}
+        {questData[0]?.questId?.questDescription}
         <br />
-        Created by {quest?.questCreator}
+        Created by {questData[0]?.questId?.questCreator}
         <br />
-        {quest?.questMembers?.length} members | {quest?.questTasks?.length}{" "}
-        tasks
+        {questData[0]?.questId?.questTasks?.length} tasks | Invite Code:{" "}
+        {questData[0]?.questId?.inviteCode}
       </Text>
     </VStack>
   );
@@ -199,21 +389,23 @@ const QuestPage = () => {
     <Box boxSize="100%" bgColor="orange.50">
       <DashboardHeader />
 
-      {quest ? (
+      {questData[0] ? (
         <Box
           bgColor="white"
-          py="1%"
+          py="0.5%"
           px={isMobile ? "3%" : "5%"}
           width="100%"
           color="black"
         >
           <Heading color="black" size="lg">
-            {quest.questType.toUpperCase()} | Quest ID: {questId}
+            {questData[0]?.questId?.questType.toUpperCase()} | Quest ID:{" "}
+            {questData[0]?.questId?._id} | Streak: {userQuestStreak} | Points{" "}
+            {userQuestPoints} | Status: {userQuestStatus}
           </Heading>
           <Box
-            key={quest.questName}
+            key={questData[0]?.questId?.questName}
             bgColor="gray.100"
-            py="5%"
+            py={"2%"}
             px="5%"
             width="100%"
             textColor="black"
@@ -225,7 +417,7 @@ const QuestPage = () => {
             position="relative"
           >
             <>
-              {quest.questName}
+              {questData[0].questId?.questName}
               {questDetails}
               {questStatus}
             </>
@@ -239,39 +431,43 @@ const QuestPage = () => {
             <CountdownTimer
               remainingTime={remainingTime}
               countdown={countdown}
+              type={questData[0]?.questId?.questType}
             />
 
-            <Box borderBottom="1px" py={isMobile ? "5%" : "0%"}>
-              <Text fontSize={isMobile ? "xl" : "xl"}>
-                Rewards/Punishments:
-              </Text>{" "}
-              <HStack
-                boxSize={isMobile ? "90%" : "40%"}
-                justify="space-between"
-              >
-                <Text textAlign="left" fontSize={isMobile ? "xl" : "lg"}>
-                  Completion
-                  <br /> Failure
+            <Button colorScheme="linkedin" onClick={handleExpandRewards}>
+              View Rewards
+            </Button>
+            {expandedRewards && (
+              <Box borderBottom="1px" py={isMobile ? "5%" : "0%"}>
+                <HStack
+                  boxSize={isMobile ? "90%" : "40%"}
+                  justify="space-between"
+                >
+                  <Text textAlign="left" fontSize={isMobile ? "xl" : "lg"}>
+                    Completion
+                    <br /> Failure
+                  </Text>
+                  <Text textAlign="right" fontSize={isMobile ? "xl" : "lg"}>
+                    {questData[0]?.questId?.reward} CP
+                    <br />
+                    {questData[0]?.questId?.punishment} CP
+                  </Text>
+                </HStack>{" "}
+                <Text
+                  boxSize={isMobile ? "90%" : "40%"}
+                  fontSize={isMobile ? "md" : "lg"}
+                  textAlign="left"
+                  py="10px"
+                >
+                  *Challenger Points (CP) apply globally to the challenger's
+                  profile. Read more about CP <b>here</b>.
                 </Text>
-                <Text textAlign="right" fontSize={isMobile ? "xl" : "lg"}>
-                  {quest.questIncentive[1]} CP
-                  <br />
-                  {quest.questIncentive[0]} CP
-                </Text>
-              </HStack>{" "}
-              <Text
-                boxSize={isMobile ? "90%" : "40%"}
-                fontSize={isMobile ? "md" : "lg"}
-                textAlign="left"
-                py="10px"
-              >
-                *Challenger Points (CP) apply globally to the challenger's
-                profile. Read more about CP <b>here</b>.
-              </Text>
-            </Box>
+              </Box>
+            )}
+
             <VStack spacing="1" boxSize="100%" pt={isMobile ? "2%" : "3%"}>
-              {quest &&
-                quest.questTasks.map((task) => (
+              {questData[0] &&
+                questData[0]?.questId?.questTasks.map((task) => (
                   <Task
                     key={task.taskName}
                     task={task}
@@ -288,11 +484,11 @@ const QuestPage = () => {
                 py={isMobile ? "10%" : "3%"}
                 w={isMobile ? "100%" : "60%"}
               >
-                Complete Quest
+                Submit Tasks
               </Button>
               <Button
                 colorScheme="red"
-                onClick={handleFinalSubmission}
+                onClick={handleForfeit}
                 px="4%"
                 py={isMobile ? "10%" : "3%"}
                 w={isMobile ? "100%" : "60%"}
@@ -312,7 +508,11 @@ const QuestPage = () => {
           width="100%"
           color="black"
         >
-          <Text textColor="black">Loading Data...</Text>
+          <Text textColor="black">
+            Loading Data...
+            <br />
+            Refresh page if stuck
+          </Text>
         </Box>
       )}
     </Box>
