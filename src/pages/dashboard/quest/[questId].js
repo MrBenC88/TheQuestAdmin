@@ -284,6 +284,9 @@ const QuestPage = () => {
     if (completedTasks === questData[0]?.questId?.questTasks?.length) {
       setIsQuestCompleted(true);
       console.log("Quest completed!");
+    } else if (completedTasks < questData[0]?.questId?.questTasks?.length) {
+      setIsQuestCompleted(false);
+      console.log("Quest not completed!");
     }
   }, [completedTasks]);
 
@@ -462,7 +465,7 @@ const QuestPage = () => {
                 py={isMobile ? "10%" : "3%"}
                 w={isMobile ? "100%" : "60%"}
               >
-                Complete Quest
+                Submit Tasks
               </Button>
               <Button
                 colorScheme="red"

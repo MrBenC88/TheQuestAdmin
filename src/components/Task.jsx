@@ -19,25 +19,17 @@ import {
 } from "@chakra-ui/react";
 
 const Task = ({ key, task, setCompletedTasks }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [proof, setProof] = useState("");
   const [isComplete, setIsTaskComplete] = useState(false);
   const [isMobile] = useMediaQuery("(max-width: 767px)");
 
-  const handleCompleteTask = () => {
-    setIsModalOpen(true);
-  };
-
   const handleTaskSubmit = () => {
-    // handle PUT request to update each task status
-    // also handle proof submission [optional upload]
-    setIsModalOpen(false);
-    setIsTaskComplete(true);
-    setCompletedTasks((prevCompletedTasks) => prevCompletedTasks + 1);
-  };
-
-  const handleProofChange = (event) => {
-    setProof(event.target.value);
+    setIsTaskComplete(!isComplete);
+    if (!isComplete) {
+      setCompletedTasks((prevCompletedTasks) => prevCompletedTasks + 1);
+    } else {
+      setCompletedTasks((prevCompletedTasks) => prevCompletedTasks - 1);
+    }
   };
 
   return (
@@ -60,40 +52,13 @@ const Task = ({ key, task, setCompletedTasks }) => {
           </Text>
           <Button
             colorScheme="linkedin"
-            onClick={handleCompleteTask}
+            onClick={handleTaskSubmit}
             disabled={isComplete}
           >
-            {isComplete ? "Completed" : "Complete"}
+            {isComplete ? "Unsubmit" : "Complete"}
           </Button>
         </HStack>
       </Box>
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <ModalOverlay />
-        <ModalContent h="80%">
-          <ModalHeader>Submit proof of completion</ModalHeader>
-          <ModalCloseButton size="lg" />
-          <ModalBody>
-            <Text textColor="black" as="b">
-              {task.taskName}
-            </Text>
-
-            <Text textColor="black" py="10%">
-              Details: <br />
-              {task.taskDescription}
-            </Text>
-            <Input
-              placeholder="Upload screenshot or other form of proof here..."
-              value={proof}
-              onChange={handleProofChange}
-            />
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="green" onClick={handleTaskSubmit}>
-              Submit
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
     </>
   );
 };
