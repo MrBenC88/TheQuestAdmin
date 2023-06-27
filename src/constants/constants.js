@@ -23,7 +23,8 @@ export const NETWORKING_GUIDE =
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 // Life Admin Constants
-export const API_BASE_URL = "http://localhost:3000/api";
+export const API_BASE_URL = "https://life-admin.vercel.app/api";
+// "http://localhost:3000/api";
 
 // Quest Duration Constants
 export const QUEST_DURATIONS = {
