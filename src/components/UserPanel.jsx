@@ -92,28 +92,43 @@ const UserPanel = () => {
         wrap={useBreakpointValue({ base: "nowrap", lg: "wrap" })}
         justify="space-evenly"
       >
-        {questData
-          .filter((q) => {
-            if (q.userQuestStatus !== "inprogress") return false;
-            const lowerCaseSearchQuery = searchQuery.toLowerCase();
+        {(() => {
+          const filteredQuestData = questData
+            .filter((q) => {
+              if (q.userQuestStatus !== "inprogress") return false;
+              const lowerCaseSearchQuery = searchQuery.toLowerCase();
+              return (
+                q.questId.questName
+                  .toLowerCase()
+                  .includes(lowerCaseSearchQuery) ||
+                q.questId.questDescription
+                  .toLowerCase()
+                  .includes(lowerCaseSearchQuery) ||
+                q.questId.questType
+                  .toLowerCase()
+                  .includes(lowerCaseSearchQuery) ||
+                q.questId.questCreator
+                  .toLowerCase()
+                  .includes(lowerCaseSearchQuery) ||
+                q.questId.questStatus
+                  .toLowerCase()
+                  .includes(lowerCaseSearchQuery)
+              );
+            })
+            .sort((a, b) => b.streak - a.streak); // Sorts descending order by streak count
+
+          if (filteredQuestData.length === 0) {
             return (
-              q.questId.questName
-                .toLowerCase()
-                .includes(lowerCaseSearchQuery) ||
-              q.questId.questDescription
-                .toLowerCase()
-                .includes(lowerCaseSearchQuery) ||
-              q.questId.questType
-                .toLowerCase()
-                .includes(lowerCaseSearchQuery) ||
-              q.questId.questCreator
-                .toLowerCase()
-                .includes(lowerCaseSearchQuery) ||
-              q.questId.questStatus.toLowerCase().includes(lowerCaseSearchQuery)
+              <Box py="5%">
+                <Text textColor="black">
+                  You don't have any quests in progress. Start adding to your
+                  quest list!
+                </Text>
+              </Box>
             );
-          })
-          .sort((a, b) => b.streak - a.streak) // Sorts descending order by streak count
-          .map((q) => {
+          }
+
+          return filteredQuestData.map((q) => {
             const backgroundImageStyle = q.questId.questImage
               ? {
                   backgroundImage: `url(${q.questId.questImage})`,
@@ -224,7 +239,8 @@ const UserPanel = () => {
                 </>
               </Box>
             );
-          })}
+          });
+        })()}
       </Flex>
     </Box>
   );
