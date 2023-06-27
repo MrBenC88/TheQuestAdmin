@@ -87,8 +87,8 @@ const DashboardHeader = () => {
     { tabName: "Support", url: "/support", icon: HamburgerIcon },
     { tabName: "Profile", url: "/profile", icon: HamburgerIcon },
     {
-      tabName: "Toggle Admin Mode",
-      url: "/admin",
+      tabName: "Create Quest",
+      url: "/questadmin",
       icon: HamburgerIcon,
     },
   ];
